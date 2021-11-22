@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+
+    <changeSet id="create account types type" author="Mateusz Kmita">
+        <sql>CREATE TYPE account_type AS ENUM ('CHECKING', 'SAVING', 'CASH', 'OTHER')</sql>
+    </changeSet>
+
+    <changeSet id="create accounts table" author="Mateusz Kmita">
+        <createTable tableName="accounts">
+            <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="account_type">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar" defaultValue="">
+            </column>
+            <column name="balance" type="integer" defaultValueNumeric="0">
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
