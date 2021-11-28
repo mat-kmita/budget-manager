@@ -2,7 +2,7 @@ package com.mateuszkmita.thesis.core.interactor;
 
 import com.mateuszkmita.thesis.core.exception.InvalidInputResourceException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
-import com.mateuszkmita.thesis.core.service.PagedAndSortedTransactionServiceInterface;
+import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.Transaction;
@@ -17,16 +17,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionInteractor implements PagedAndSortedTransactionServiceInterface {
+public class TransactionInteractor implements TransactionServiceInterface {
 
     private final TransactionsRepositoryInterface transactionsRepository;
 
     private final AccountServiceInterface accountService;
-
-    @Override
-    public Iterable<Transaction> findAllTransactions() {
-        return transactionsRepository.findAll();
-    }
 
     @Override
     public Optional<Transaction> findTransactionById(int id) {
