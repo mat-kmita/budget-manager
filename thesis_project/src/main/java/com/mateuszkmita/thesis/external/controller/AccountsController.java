@@ -2,7 +2,7 @@ package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
-import com.mateuszkmita.thesis.core.service.PagedAndSortedTransactionServiceInterface;
+import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.controller.dto.*;
 import com.mateuszkmita.thesis.external.controller.mapper.AccountUpdateMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.PageDtoMapper;
@@ -25,7 +25,7 @@ public class AccountsController {
     private final AccountServiceInterface accountService;
     private final AccountUpdateMapper accountUpdateMapper;
     private final TransactionMapper transactionMapper;
-    private final PagedAndSortedTransactionServiceInterface transactionService;
+    private final TransactionServiceInterface transactionService;
     private final PageDtoMapper pageDtoMapper;
 
     @GetMapping("/")
@@ -60,7 +60,7 @@ public class AccountsController {
     }
 
     @GetMapping("/{accountId}/transaction/")
-    PageDto<TransactionDto> getTransactionsPage(@PathVariable int accountId,
+    public PageDto<TransactionDto> getTransactionsPage(@PathVariable int accountId,
                                                 @RequestParam(name = "page", required = false, defaultValue = "0") int page,
                                                 @RequestParam(name = "length", required = false, defaultValue = "100") int length,
                                                 @RequestParam(name = "sortField") Transaction.Fields sortField,
