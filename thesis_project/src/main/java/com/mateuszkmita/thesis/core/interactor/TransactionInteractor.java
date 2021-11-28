@@ -1,5 +1,6 @@
 package com.mateuszkmita.thesis.core.interactor;
 
+import com.mateuszkmita.thesis.core.exception.InvalidInputResourceException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.PagedAndSortedTransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
@@ -36,7 +37,7 @@ public class TransactionInteractor implements PagedAndSortedTransactionServiceIn
     @Transactional
     public Transaction saveTransactionEntity(Transaction transaction) {
         if (transaction.getAccount() == null || transaction.getId() != null) {
-            return null;
+            throw new InvalidInputResourceException("New transaction must have specified account and must not have an ID!");
         }
 
         Account account = transaction.getAccount();
@@ -49,7 +50,7 @@ public class TransactionInteractor implements PagedAndSortedTransactionServiceIn
     @Transactional
     public Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction) {
         if (updatedTransaction.getId() == null) {
-            return null;
+            throw new InvalidInputResourceException("Updated transaction must not have null ID!");
         }
 
         Account account = updatedTransaction.getAccount();
