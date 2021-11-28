@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+
+    <changeSet id="create transactions tables" author="Mateusz Kmita">
+        <createTable tableName="transactions">
+            <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="memo" type="varchar">
+            </column>
+            <column name="amount" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_account" references="accounts(id)"/>
+            </column>
+            <column name="payee" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create transfers table" author="Mateusz Kmita">
+        <createTable tableName="transfers">
+            <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="memo" type="varchar">
+            </column>
+            <column name="amount" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="from_account_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_from_account" references="accounts(id)"/>
+            </column>
+            <column name="to_account_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_to_account" references="accounts(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add check different accounts to transfers table" author="Mateusz Kmita">
+        <sql>
+            ALTER TABLE transfers ADD CONSTRAINT different_accounts CHECK (from_account_id != to_account_id)
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

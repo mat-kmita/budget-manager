@@ -1,11 +1,15 @@
 package com.mateuszkmita.thesis.core.exception;
 
-public class ResourceNotFoundException extends Exception {
-    public ResourceNotFoundException() {
-        super();
-    }
+import lombok.Getter;
 
-    public ResourceNotFoundException(String message) {
-        super(message);
+@Getter
+public class ResourceNotFoundException extends Exception {
+
+    private final String resourceName;
+    private final int id;
+
+    public ResourceNotFoundException(String resourceName, int id) {
+        this.id = id;
+        this.resourceName = resourceName;
     }
 }

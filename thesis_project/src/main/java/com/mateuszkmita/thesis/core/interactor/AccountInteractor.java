@@ -1,6 +1,7 @@
-package com.mateuszkmita.thesis.core;
+package com.mateuszkmita.thesis.core.interactor;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
+import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.external.repository.AccountRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,6 @@ public class AccountInteractor implements AccountServiceInterface {
     public void deleteAccountById(int accountId) throws ResourceNotFoundException {
         Optional<Account> optionalAccount = findAccountById(accountId);
 
-        accountRepository.delete(optionalAccount.orElseThrow(() -> new ResourceNotFoundException("Nie znaleziono konta o ID" + accountId)));
+        accountRepository.delete(optionalAccount.orElseThrow(() -> new ResourceNotFoundException("account", accountId)));
     }
 }

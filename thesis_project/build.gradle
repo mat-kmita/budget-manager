@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.mateuszkmita'
 version = '0.0.1'
-sourceCompatibility = '17'
+sourceCompatibility = "16"
 
 configurations {
     compileOnly {
@@ -30,8 +30,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core'
 }
 
 test {
     useJUnitPlatform()
 }
+targetCompatibility = JavaVersion.VERSION_16
