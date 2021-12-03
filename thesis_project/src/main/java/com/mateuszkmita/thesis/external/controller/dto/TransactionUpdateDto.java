@@ -10,6 +10,6 @@ import java.time.LocalDate;
 public class TransactionUpdateDto {
     private LocalDate date;
     private String memo;
-    private int amount;
+    private Integer amount;
     private String payee;
 }

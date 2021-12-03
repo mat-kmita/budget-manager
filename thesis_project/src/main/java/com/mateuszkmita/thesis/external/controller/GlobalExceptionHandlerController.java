@@ -1,10 +1,11 @@
 package com.mateuszkmita.thesis.external.controller;
 
-import com.mateuszkmita.thesis.core.exception.InvalidInputResourceException;
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.external.controller.dto.ProcedureResultDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,12 +25,24 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler({
-            InvalidInputResourceException.class
+            IllegalArgumentException.class
     })
     @ResponseBody
-    public ResponseEntity<ProcedureResultDto> invalidInputResourceExceptionHandler(InvalidInputResourceException ex) {
+    public ResponseEntity<ProcedureResultDto> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
         ProcedureResultDto procedureResultDto = new ProcedureResultDto();
-        procedureResultDto.setMessage("Input data is invalid! " + ex.getMessage());
+        procedureResultDto.setMessage(ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(procedureResultDto);
+    }
+
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class
+    })
+    @ResponseBody
+    public ResponseEntity<ProcedureResultDto> invalidRequestDataExceptionHandler(MethodArgumentNotValidException ex) {
+        BindingResult bindingResult = ex.getBindingResult();
+        ProcedureResultDto procedureResultDto = new ProcedureResultDto();
+        procedureResultDto.setMessage(bindingResult.getFieldError().getDefaultMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(procedureResultDto);
     }
