@@ -11,6 +11,6 @@ public interface TransactionServiceInterface {
                                                   Sort.Direction direction, int page, int length);
     Optional<Transaction> findTransactionById(int id);
     Transaction saveTransactionEntity(Transaction transaction);
-    Transaction updateTransactionEntity(Transaction oldTransactio, Transaction updatedTransaction);
+    Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction);
     void deleteTransaction(Transaction transaction);
 }

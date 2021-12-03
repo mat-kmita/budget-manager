@@ -1,6 +1,5 @@
 package com.mateuszkmita.thesis.core.interactor;
 
-import com.mateuszkmita.thesis.core.exception.InvalidInputResourceException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
@@ -13,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -32,7 +32,7 @@ public class TransactionInteractor implements TransactionServiceInterface {
     @Transactional
     public Transaction saveTransactionEntity(Transaction transaction) {
         if (transaction.getAccount() == null || transaction.getId() != null) {
-            throw new InvalidInputResourceException("New transaction must have specified account and must not have an ID!");
+            throw new IllegalArgumentException("New transaction must have specified account and must not have an ID!");
         }
 
         Account account = transaction.getAccount();
@@ -44,8 +44,8 @@ public class TransactionInteractor implements TransactionServiceInterface {
     @Override
     @Transactional
     public Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction) {
-        if (updatedTransaction.getId() == null) {
-            throw new InvalidInputResourceException("Updated transaction must not have null ID!");
+        if (!Objects.equals(updatedTransaction.getId(), oldTransaction.getId())) {
+            throw new IllegalArgumentException("Transaction update must not change ID!");
         }
 
         Account account = updatedTransaction.getAccount();
