@@ -42,7 +42,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity<ProcedureResultDto> invalidRequestDataExceptionHandler(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
         ProcedureResultDto procedureResultDto = new ProcedureResultDto();
-        procedureResultDto.setMessage(bindingResult.getFieldError().getDefaultMessage());
+        procedureResultDto.setMessage(bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(procedureResultDto);
     }
