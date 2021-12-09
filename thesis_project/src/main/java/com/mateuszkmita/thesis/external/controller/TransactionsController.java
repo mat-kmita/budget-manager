@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/transaction/")
+@RequestMapping("/api/v1/transaction/")
 @RequiredArgsConstructor
 public class TransactionsController {
 
     private final TransactionServiceInterface transactionService;
     private final TransactionMapper transactionMapper;
 
-    @PutMapping("{transactionId}")
+    @PutMapping("/{transactionId}/")
     public ResponseEntity<TransactionDto> updateTransaction(@PathVariable(name = "transactionId") int transactionId,
                                                             @RequestBody TransactionUpdateDto dto) {
         Optional<Transaction> optionalTransaction = transactionService.findTransactionById(transactionId);
