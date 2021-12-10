@@ -36,6 +36,10 @@ public class Transaction {
     @Column(name = "payee", nullable = false)
     private String payee;
 
+    @OneToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     public Transaction copy() {
         Transaction existingTransactionCopy = new Transaction();
         existingTransactionCopy.setId(this.getId());
@@ -44,6 +48,7 @@ public class Transaction {
         existingTransactionCopy.setAmount(this.getAmount());
         existingTransactionCopy.setAccount(this.getAccount());
         existingTransactionCopy.setPayee(this.getPayee());
+        existingTransactionCopy.setCategory(this.getCategory());
 
         return existingTransactionCopy;
     }

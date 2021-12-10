@@ -6,6 +6,7 @@ import com.mateuszkmita.thesis.model.Category;
 import java.util.Optional;
 
 public interface CategoryServiceInterface {
+    Optional<Category> findCategoryById(int id);
     Iterable<Category> findAllCategories();
     Optional<Category> findCategoryByName(String name);
     Category saveCategoryEntity(Category entity);

@@ -1,11 +1,15 @@
 package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
+import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
+import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.controller.dto.ProcedureResultDto;
 import com.mateuszkmita.thesis.external.controller.dto.TransactionDto;
 import com.mateuszkmita.thesis.external.controller.dto.TransactionUpdateDto;
 import com.mateuszkmita.thesis.external.controller.mapper.TransactionMapper;
+import com.mateuszkmita.thesis.model.Account;
+import com.mateuszkmita.thesis.model.Category;
 import com.mateuszkmita.thesis.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,22 +25,21 @@ public class TransactionsController {
 
     private final TransactionServiceInterface transactionService;
     private final TransactionMapper transactionMapper;
+    private final CategoryServiceInterface categoryService;
+    private final AccountServiceInterface accountService;
 
     @PutMapping("/{transactionId}/")
     public ResponseEntity<TransactionDto> updateTransaction(@PathVariable(name = "transactionId") int transactionId,
-                                                            @RequestBody TransactionUpdateDto dto) {
-        Optional<Transaction> optionalTransaction = transactionService.findTransactionById(transactionId);
+                                                            @RequestBody TransactionUpdateDto dto) throws ResourceNotFoundException {
+        Transaction oldTransaction = transactionService.findTransactionById(transactionId)
+                        .orElseThrow(() -> new ResourceNotFoundException("transaction", transactionId));
+        Transaction updatedTransaction = oldTransaction.copy();
+        Category updatedCategory = Optional.ofNullable(dto.categoryId()).flatMap(categoryService::findCategoryById).orElse(null);
+        transactionMapper.updateEntityByDto(dto, updatedTransaction, updatedCategory);
 
-        if (optionalTransaction.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        Transaction existingTransaction = optionalTransaction.get();
-        Transaction existingTransactionCopy = existingTransaction.copy();
-        transactionMapper.updateEntityByDto(dto, existingTransaction);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(transactionMapper.entityToDto(transactionService.updateTransactionEntity(existingTransactionCopy, existingTransaction)));
+                .body(transactionMapper.entityToDto(transactionService.updateTransactionEntity(oldTransaction, updatedTransaction)));
     }
 
     @DeleteMapping("{transactionId}")

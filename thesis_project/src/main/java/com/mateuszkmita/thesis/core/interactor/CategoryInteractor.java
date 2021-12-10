@@ -16,6 +16,11 @@ public class CategoryInteractor implements CategoryServiceInterface {
     private final CategoryRepositoryInterface categoryRepository;
 
     @Override
+    public Optional<Category> findCategoryById(int id) {
+        return categoryRepository.findById(id);
+    }
+
+    @Override
     public Iterable<Category> findAllCategories() {
         return categoryRepository.findAll();
     }
