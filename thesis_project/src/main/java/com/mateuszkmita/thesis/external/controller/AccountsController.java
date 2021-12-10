@@ -2,6 +2,7 @@ package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
+import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
 import com.mateuszkmita.thesis.external.controller.dto.*;
@@ -10,6 +11,7 @@ import com.mateuszkmita.thesis.external.controller.mapper.PageDtoMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.TransactionMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.TransferMapper;
 import com.mateuszkmita.thesis.model.Account;
+import com.mateuszkmita.thesis.model.Category;
 import com.mateuszkmita.thesis.model.Transaction;
 import com.mateuszkmita.thesis.model.Transfer;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AccountsController {
     private final PageDtoMapper pageDtoMapper;
     private final TransferMapper transferMapper;
     private final TransferServiceInterface transferService;
+    private final CategoryServiceInterface categoryService;
 
     @GetMapping("/")
     public Iterable<Account> getAllAccounts() {
@@ -86,7 +89,12 @@ public class AccountsController {
             throw new ResourceNotFoundException("account", accountId);
         }
 
-        Transaction newTransaction = transactionMapper.newTransactionDtoToEntity(transactionDto, account.get());
+        Optional<Category> category = categoryService.findCategoryById(transactionDto.categoryId());
+        if (category.isEmpty()) {
+            throw new ResourceNotFoundException("category", transactionDto.categoryId());
+        }
+
+        Transaction newTransaction = transactionMapper.newTransactionDtoToEntity(transactionDto, account.get(), category.get());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(transactionMapper.entityToDto(transactionService.saveTransactionEntity(newTransaction)));

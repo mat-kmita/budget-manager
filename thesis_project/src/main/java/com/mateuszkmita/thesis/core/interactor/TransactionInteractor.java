@@ -20,7 +20,6 @@ import java.util.Optional;
 public class TransactionInteractor implements TransactionServiceInterface {
 
     private final TransactionsRepositoryInterface transactionsRepository;
-
     private final AccountServiceInterface accountService;
 
     @Override
@@ -45,7 +44,11 @@ public class TransactionInteractor implements TransactionServiceInterface {
     @Transactional
     public Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction) {
         if (!Objects.equals(updatedTransaction.getId(), oldTransaction.getId())) {
-            throw new IllegalArgumentException("Transaction update must not change ID!");
+            throw new IllegalArgumentException("Transaction update must not change the ID!");
+        }
+
+        if (updatedTransaction.getAccount().getId() != oldTransaction.getAccount().getId()) {
+            throw new IllegalArgumentException("Transactions update must not change account!");
         }
 
         Account account = updatedTransaction.getAccount();

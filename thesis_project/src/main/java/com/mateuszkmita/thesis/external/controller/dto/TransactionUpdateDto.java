@@ -1,15 +1,8 @@
 package com.mateuszkmita.thesis.external.controller.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
-public class TransactionUpdateDto {
-    private LocalDate date;
-    private String memo;
-    private Integer amount;
-    private String payee;
-}
+public record TransactionUpdateDto(@JsonFormat(pattern = "dd-MM-yyyy") LocalDate date,
+                                   String memo, Integer amount, String payee, Integer categoryId) {}
