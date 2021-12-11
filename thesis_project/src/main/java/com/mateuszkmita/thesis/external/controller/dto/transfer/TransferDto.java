@@ -1,12 +1,12 @@
-package com.mateuszkmita.thesis.external.controller.dto;
+package com.mateuszkmita.thesis.external.controller.dto.transfer;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
-@Setter
+@AllArgsConstructor
 public class TransferDto {
     private int id;
     private LocalDate date;

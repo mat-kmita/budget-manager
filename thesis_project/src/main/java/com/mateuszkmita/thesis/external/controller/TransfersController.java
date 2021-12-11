@@ -2,9 +2,9 @@ package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
-import com.mateuszkmita.thesis.external.controller.dto.ProcedureResultDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransferDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransferUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferUpdateDto;
 import com.mateuszkmita.thesis.external.controller.mapper.TransferMapper;
 import com.mateuszkmita.thesis.model.Transfer;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +25,7 @@ public class TransfersController {
 
     @PutMapping("{transferId}/")
     public ResponseEntity<TransferDto> updateTransfer(@PathVariable(name = "transferId") int transferId,
-                                                      @RequestBody TransferUpdateDto dto) {
+                                                      @RequestBody @Valid TransferUpdateDto dto) {
         Optional<Transfer> optionalTransfer = transferService.findTransferById(transferId);
 
         if (optionalTransfer.isEmpty()) {

@@ -1,4 +1,4 @@
-package com.mateuszkmita.thesis.external.controller.dto;
+package com.mateuszkmita.thesis.external.controller.dto.transaction;
 
 import java.time.LocalDate;
 
