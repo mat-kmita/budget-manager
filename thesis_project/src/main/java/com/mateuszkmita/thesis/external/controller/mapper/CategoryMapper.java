@@ -1,8 +1,8 @@
 package com.mateuszkmita.thesis.external.controller.mapper;
 
-import com.mateuszkmita.thesis.external.controller.dto.CategoryDto;
-import com.mateuszkmita.thesis.external.controller.dto.NewCategoryDto;
-import com.mateuszkmita.thesis.external.controller.dto.UpdatedCategoryDto;
+import com.mateuszkmita.thesis.external.controller.dto.category.CategoryDto;
+import com.mateuszkmita.thesis.external.controller.dto.category.NewCategoryDto;
+import com.mateuszkmita.thesis.external.controller.dto.category.CategoryUpdateDto;
 import com.mateuszkmita.thesis.model.Category;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -16,5 +16,5 @@ public interface CategoryMapper {
 
     Category newCategoryDtoToEntity(NewCategoryDto dto);
 
-    Category updatedCategoryDtoToEntity(UpdatedCategoryDto dto);
+    Category updatedCategoryDtoToEntity(CategoryUpdateDto dto);
 }

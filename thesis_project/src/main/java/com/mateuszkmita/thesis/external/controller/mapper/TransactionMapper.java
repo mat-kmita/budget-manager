@@ -1,8 +1,8 @@
 package com.mateuszkmita.thesis.external.controller.mapper;
 
-import com.mateuszkmita.thesis.external.controller.dto.NewTransactionDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransactionDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransactionUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.NewTransactionDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.TransactionDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.TransactionUpdateDto;
 import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.Category;
 import com.mateuszkmita.thesis.model.Transaction;

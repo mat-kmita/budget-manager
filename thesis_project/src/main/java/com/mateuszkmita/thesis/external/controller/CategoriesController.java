@@ -2,9 +2,9 @@ package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
-import com.mateuszkmita.thesis.external.controller.dto.CategoryDto;
-import com.mateuszkmita.thesis.external.controller.dto.NewCategoryDto;
-import com.mateuszkmita.thesis.external.controller.dto.UpdatedCategoryDto;
+import com.mateuszkmita.thesis.external.controller.dto.category.CategoryDto;
+import com.mateuszkmita.thesis.external.controller.dto.category.CategoryUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.category.NewCategoryDto;
 import com.mateuszkmita.thesis.external.controller.mapper.CategoryMapper;
 import com.mateuszkmita.thesis.model.Category;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class CategoriesController {
     }
 
     @PutMapping("/{categoryId}/")
-    public ResponseEntity<CategoryDto> updateCategory(@RequestBody @Valid UpdatedCategoryDto requestDto,
+    public ResponseEntity<CategoryDto> updateCategory(@RequestBody @Valid CategoryUpdateDto requestDto,
                                                       @PathVariable(name = "categoryId") int id) {
         Category category = categoryMapper.updatedCategoryDtoToEntity(requestDto);
         category.setId(id);
