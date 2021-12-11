@@ -1,7 +1,7 @@
 package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
-import com.mateuszkmita.thesis.external.controller.dto.ProcedureResultDto;
+import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,8 +18,8 @@ public class GlobalExceptionHandlerController {
     })
     @ResponseBody
     public ResponseEntity<ProcedureResultDto> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
-        ProcedureResultDto procedureResultDto = new ProcedureResultDto();
-        procedureResultDto.setMessage("Resource " + ex.getResourceName() + " with ID " + ex.getId() + " not found!");
+        String message = "Resource " + ex.getResourceName() + " with ID " + ex.getId() + " not found!";
+        ProcedureResultDto procedureResultDto = new ProcedureResultDto(message);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(procedureResultDto);
     }
@@ -29,8 +29,7 @@ public class GlobalExceptionHandlerController {
     })
     @ResponseBody
     public ResponseEntity<ProcedureResultDto> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
-        ProcedureResultDto procedureResultDto = new ProcedureResultDto();
-        procedureResultDto.setMessage(ex.getMessage());
+        ProcedureResultDto procedureResultDto = new ProcedureResultDto(ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(procedureResultDto);
     }
@@ -41,8 +40,8 @@ public class GlobalExceptionHandlerController {
     @ResponseBody
     public ResponseEntity<ProcedureResultDto> invalidRequestDataExceptionHandler(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
-        ProcedureResultDto procedureResultDto = new ProcedureResultDto();
-        procedureResultDto.setMessage(bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage());
+        String message = bindingResult.getFieldError().getField() + ": " + bindingResult.getFieldError().getDefaultMessage();
+        ProcedureResultDto procedureResultDto = new ProcedureResultDto(message);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(procedureResultDto);
     }

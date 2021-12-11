@@ -5,8 +5,14 @@ import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
-import com.mateuszkmita.thesis.external.controller.dto.*;
-import com.mateuszkmita.thesis.external.controller.mapper.AccountUpdateMapper;
+import com.mateuszkmita.thesis.external.controller.dto.account.AccountUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.page.PageDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.NewTransactionDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.TransactionDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.NewTransferDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferDto;
+import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
+import com.mateuszkmita.thesis.external.controller.mapper.AccountMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.PageDtoMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.TransactionMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.TransferMapper;
@@ -29,7 +35,7 @@ import java.util.Optional;
 public class AccountsController {
 
     private final AccountServiceInterface accountService;
-    private final AccountUpdateMapper accountUpdateMapper;
+    private final AccountMapper accountMapper;
     private final TransactionMapper transactionMapper;
     private final TransactionServiceInterface transactionService;
     private final PageDtoMapper pageDtoMapper;
@@ -57,7 +63,7 @@ public class AccountsController {
         }
 
         Account account = existingAccount.get();
-        accountUpdateMapper.updateAccountEntity(accountUpdateDto, account);
+        accountMapper.updateAccountEntity(accountUpdateDto, account);
         return ResponseEntity.status(HttpStatus.OK).body(accountService.updateAccountEntity(account));
     }
 
@@ -70,17 +76,17 @@ public class AccountsController {
 
     @GetMapping("/{accountId}/transaction/")
     public PageDto<TransactionDto> getTransactionsPage(@PathVariable int accountId,
-                                                @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-                                                @RequestParam(name = "length", required = false, defaultValue = "100") int length,
-                                                @RequestParam(name = "sortField") Transaction.Fields sortField,
-                                                @RequestParam(name = "sortDirection") Sort.Direction direction) {
+                                                       @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                       @RequestParam(name = "length", required = false, defaultValue = "100") int length,
+                                                       @RequestParam(name = "sortField") Transaction.Fields sortField,
+                                                       @RequestParam(name = "sortDirection") Sort.Direction direction) {
         return pageDtoMapper.toDto(transactionService
                 .findTransactionsByAccountId(accountId, sortField, direction, page, length)
                 .map(transactionMapper::entityToDto));
     }
 
     @PostMapping("/{accountId}/transaction/")
-    public ResponseEntity<TransactionDto> addTransaction(@RequestBody NewTransactionDto transactionDto,
+    public ResponseEntity<TransactionDto> addTransaction(@RequestBody @Valid NewTransactionDto transactionDto,
                                                          @PathVariable(name = "accountId") int accountId)
             throws ResourceNotFoundException {
 
@@ -123,14 +129,14 @@ public class AccountsController {
                                                    @PathVariable(name = "accountId") int accountId)
             throws ResourceNotFoundException {
 
-        if (accountId == transferDto.getToAccountId()) {
+        if (accountId == transferDto.toAccountId()) {
             throw new IllegalArgumentException("Destination account must be different from source account!");
         }
 
         Account fromAccount = accountService.findAccountById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("account", accountId));
-        Account toAccount = accountService.findAccountById(transferDto.getToAccountId())
-                .orElseThrow(() -> new ResourceNotFoundException("account", transferDto.getToAccountId()));
+        Account toAccount = accountService.findAccountById(transferDto.toAccountId())
+                .orElseThrow(() -> new ResourceNotFoundException("account", transferDto.toAccountId()));
 
         Transfer newTransfer = transferMapper.newDtoToEntity(transferDto, fromAccount, toAccount);
         Transfer savedEntity = transferService.saveTransferEntity(newTransfer);

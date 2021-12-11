@@ -1,14 +1,14 @@
 package com.mateuszkmita.thesis.external.controller.mapper;
 
-import com.mateuszkmita.thesis.external.controller.dto.NewTransferDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransferDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransferDtoWithBothPayees;
-import com.mateuszkmita.thesis.external.controller.dto.TransferUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.NewTransferDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferDto;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferDtoWithBothPayees;
+import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferUpdateDto;
 import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.Transfer;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface TransferMapper {
 
     @Mapping(target = "id", source = "entity.id")

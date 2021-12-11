@@ -4,11 +4,10 @@ import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
-import com.mateuszkmita.thesis.external.controller.dto.ProcedureResultDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransactionDto;
-import com.mateuszkmita.thesis.external.controller.dto.TransactionUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.TransactionDto;
+import com.mateuszkmita.thesis.external.controller.dto.transaction.TransactionUpdateDto;
 import com.mateuszkmita.thesis.external.controller.mapper.TransactionMapper;
-import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.Category;
 import com.mateuszkmita.thesis.model.Transaction;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +30,7 @@ public class TransactionsController {
 
     @PutMapping("/{transactionId}/")
     public ResponseEntity<TransactionDto> updateTransaction(@PathVariable(name = "transactionId") int transactionId,
-                                                            @RequestBody TransactionUpdateDto dto) throws ResourceNotFoundException {
+                                                            @RequestBody @Valid TransactionUpdateDto dto) throws ResourceNotFoundException {
         Transaction oldTransaction = transactionService.findTransactionById(transactionId)
                         .orElseThrow(() -> new ResourceNotFoundException("transaction", transactionId));
         Transaction updatedTransaction = oldTransaction.copy();
