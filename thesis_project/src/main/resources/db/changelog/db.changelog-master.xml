@@ -9,4 +9,5 @@
     <include file="db/changelog/tables/accounts.xml" />
     <include file="db/changelog/tables/transactions.xml" />
     <include file="db/changelog/tables/categories.xml" />
+    <include file="db/changelog/tables/budgets.xml" />
 </databaseChangeLog>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
+      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+
+    <changeSet id="create budgets" author="Mateusz Kmita">
+        <createTable tableName="budgets">
+            <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="month_year" type="date">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="available" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="budgets_categories">
+            <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="budget_id" type="integer">
+                <constraints references="budgets(id)" foreignKeyName="budget_fk" nullable="false"/>
+            </column>
+            <column name="category_id" type="integer">
+                <constraints references="categories(id)" foreignKeyName="category_fk" nullable="false"/>
+            </column>
+            <column name="amount" type="integer" defaultValueNumeric="0">
+            </column>
+            <column name="spent" type="integer" defaultValueNumeric="0">
+            </column>
+            <column name="balance" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
