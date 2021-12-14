@@ -4,6 +4,7 @@ import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
+import com.mateuszkmita.thesis.model.Category;
 import com.mateuszkmita.thesis.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,8 @@ public class TransactionInteractor implements TransactionServiceInterface {
         Account account = transaction.getAccount();
         account.setBalance(account.getBalance() + transaction.getAmount());
 
+        
+
         return transactionsRepository.save(transaction);
     }
 
@@ -65,6 +68,16 @@ public class TransactionInteractor implements TransactionServiceInterface {
         accountService.updateAccountEntity(account);
 
         transactionsRepository.delete(transaction);
+    }
+
+    @Override
+    public int calculateIncomeByMonthAndYear(int monthValue, int year) {
+        return transactionsRepository.findIncome(monthValue, year);
+    }
+
+    @Override
+    public int calculateAmountByCategoryAndDate(Category category, int month, int year) {
+        return transactionsRepository.findAmount(category.getId(), month, year);
     }
 
     @Override

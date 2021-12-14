@@ -27,6 +27,6 @@ public class Budget {
     @Column(name = "available", nullable = false)
     private int available;
 
-    @OneToMany(mappedBy = "budget", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "budget", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<BudgetCategory> budgetCategories;
 }
