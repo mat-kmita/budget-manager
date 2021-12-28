@@ -32,7 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController()
 @RequestMapping("/api/v1/account/")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 public class AccountsController {
 
     private final AccountServiceInterface accountService;

@@ -18,6 +18,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/transfer/")
 @RequiredArgsConstructor
+@CrossOrigin
 public class TransfersController {
 
     private final TransferServiceInterface transferService;
