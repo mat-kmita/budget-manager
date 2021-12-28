@@ -4,6 +4,6 @@ public record PageDto<T>(
         Iterable<T> data,
         int page,
         int numberOfPages,
-        int allDataSize
+        long allDataSize
 ) {
 }
