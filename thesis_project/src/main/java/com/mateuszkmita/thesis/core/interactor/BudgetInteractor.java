@@ -5,9 +5,11 @@ import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.BudgetServiceInterface;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
+import com.mateuszkmita.thesis.external.repository.BudgetCategoryRepositoryInterface;
 import com.mateuszkmita.thesis.external.repository.BudgetRepositoryInterface;
 import com.mateuszkmita.thesis.model.Budget;
 import com.mateuszkmita.thesis.model.BudgetCategory;
+import com.mateuszkmita.thesis.model.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -24,8 +27,6 @@ public class BudgetInteractor implements BudgetServiceInterface {
 
     private final BudgetRepositoryInterface budgetRepository;
     private final CategoryServiceInterface categoryService;
-    private final TransactionServiceInterface transactionService;
-    private final BudgetCategoryServiceInterface budgetCategoryService;
 
     @Override
     public Optional<Budget> findBudget(int month, int year) {
@@ -47,51 +48,25 @@ public class BudgetInteractor implements BudgetServiceInterface {
         }
 
         LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+        Optional<Budget> previousBudget = budgetRepository.findFirstByDateBeforeOrderByDateDesc(firstDayOfMonth);
+        Optional<Budget> nextBudget = budgetRepository.findFirstByDateAfterOrderByDateAsc(firstDayOfMonth);
 
-        Budget budget = new Budget(null, firstDayOfMonth, 0, null);
-        List<BudgetCategory> allCategories = StreamSupport
-                .stream(categoryService.findAllCategories().spliterator(), true)
-                .map(category -> new BudgetCategory(null, budget, category, 0, 0, 0))
-                .collect(Collectors.toList());
-        budget.setBudgetCategories(allCategories);
+        Budget budget = new Budget(null, firstDayOfMonth, null, previousBudget.orElse(null), nextBudget.orElse(null), 0, 0, 0);
+        List<BudgetCategory> budgetCategories = StreamSupport.stream(categoryService.findAllCategories().spliterator(), false)
+                .map(c -> new BudgetCategory(null, budget, c, 0, Set.of())).collect(Collectors.toList());
+        budget.setBudgetCategories(budgetCategories);
+        nextBudget.ifPresent(b -> b.setPreviousBudget(budget));
+        Budget persistedBudget = budgetRepository.save(budget);
+        nextBudget.ifPresent(budgetRepository::save);
 
-        var persisted = budgetRepository.save(budget);
-        try {
-            int x = calculateAmountAvailable(budget.getId());
-            persisted.setAvailable(x);
-
-            persisted.setBudgetCategories(persisted.getBudgetCategories().stream()
-                    .map(budgetCategoryService::calculateBudgetCategoryAmounts)
-                    .collect(Collectors.toList()));
-
-            budgetRepository.save(persisted);
-        } catch (ResourceNotFoundException e) {
-            e.printStackTrace();
-        }
-        return persisted;
+        // TODO budget Category interactor powinien sie tym zajmowac
+        return budgetRepository.save(persistedBudget);
     }
 
     @Override
     public int calculateAmountAvailable(int budgetId)
             throws ResourceNotFoundException {
-        Budget budget = budgetRepository.findById(budgetId)
-                .orElseThrow(() -> new ResourceNotFoundException("budget", budgetId));
-        Optional<Budget> optionalPreviousBudget = budgetRepository
-                .findFirstByDateBeforeOrderByDateDesc(budget.getDate());
-        int previousBudgetBalance = optionalPreviousBudget.map(Budget::getAvailable).orElse(0);
-        int previousBudgetOverspentCategoriesSum = optionalPreviousBudget
-                .map(Budget::getBudgetCategories)
-                .map(categories -> categories.stream()
-                        .map(BudgetCategory::getBalance)
-                        .filter(integer -> integer < 0)
-                        .reduce(0, Integer::sum))
-                .orElse(0);
-        int thisMonthIncome = transactionService.calculateIncomeByMonthAndYear(budget.getDate().getMonthValue(),
-                budget.getDate().getYear());
-        int thisMonthBudgeted = budget.getBudgetCategories().stream()
-                .map(BudgetCategory::getAmount)
-                .reduce(0, Integer::sum);
 
-        return previousBudgetBalance + previousBudgetOverspentCategoriesSum + thisMonthIncome - thisMonthBudgeted;
+        return 0;
     }
 }

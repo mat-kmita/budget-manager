@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.Optional;
 
 public interface TransactionServiceInterface {
@@ -16,5 +17,5 @@ public interface TransactionServiceInterface {
     Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction);
     void deleteTransaction(Transaction transaction);
     int calculateIncomeByMonthAndYear(int monthValue, int year);
-    int calculateAmountByCategoryAndDate(Category category, int month, int year);
+    Iterable<Transaction> findByCategoryAndDate(Category category, LocalDate date);
 }

@@ -37,8 +37,7 @@ public class BudgetController {
         Budget budget = budgetService.findBudget(month, year)
                 .orElseThrow(() -> new ResourceNotFoundException("budget", 0));
 
-        BudgetDto result = new BudgetDto(budget.getId(), budget.getDate().getMonthValue(),
-                budget.getDate().getYear());
+        BudgetDto result = budgetMapper.toDto(budget);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
