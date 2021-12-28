@@ -11,6 +11,6 @@ public interface PageDtoMapper {
         }
 
         return new PageDto<>(pageEntity.getContent(), pageEntity.getNumber(), pageEntity.getTotalPages(),
-                pageEntity.getNumberOfElements());
+                pageEntity.getTotalElements());
     }
 }
