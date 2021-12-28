@@ -40,6 +40,10 @@ public class Transaction {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "budget_category_id")
+    private BudgetCategory budgetCategory;
+
     public Transaction copy() {
         Transaction existingTransactionCopy = new Transaction();
         existingTransactionCopy.setId(this.getId());
@@ -49,6 +53,7 @@ public class Transaction {
         existingTransactionCopy.setAccount(this.getAccount());
         existingTransactionCopy.setPayee(this.getPayee());
         existingTransactionCopy.setCategory(this.getCategory());
+        existingTransactionCopy.setBudgetCategory(this.getBudgetCategory());
 
         return existingTransactionCopy;
     }

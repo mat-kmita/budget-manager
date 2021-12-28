@@ -17,6 +17,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/category/")
 @RequiredArgsConstructor
+@CrossOrigin
 public class CategoriesController {
 
     private final CategoryServiceInterface categoryService;

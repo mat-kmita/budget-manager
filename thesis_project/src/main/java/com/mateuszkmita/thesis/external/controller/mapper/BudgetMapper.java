@@ -14,12 +14,13 @@ public interface BudgetMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "month", expression = "java(budget.getDate().getMonthValue())")
     @Mapping(target = "year", source = "budget.date.year")
+    @Mapping(target = "available", expression = "java(budget.available())")
     BudgetDto toDto(Budget budget);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "category", source = "category")
-    @Mapping(target = "budgetedAmount", source = "amount")
+    @Mapping(target = "amount", source = "amount")
     @Mapping(target = "spent", source = "spent")
-    @Mapping(target = "balance", source = "balance")
+    @Mapping(target = "available", expression = "java(budgetCategory.available())")
     BudgetCategoryDto toDto(BudgetCategory budgetCategory);
 }

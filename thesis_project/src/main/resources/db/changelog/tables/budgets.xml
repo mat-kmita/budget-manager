@@ -14,10 +14,22 @@
             <column name="month_year" type="date">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="available" type="integer">
+            <column name="budgeted_amount" type="integer">
                 <constraints nullable="false"/>
             </column>
+            <column name="incomes_sum" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="overspent_sum" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="prev_budget_id" type="integer">
+            </column>
         </createTable>
+        <addForeignKeyConstraint baseTableName="budgets" baseColumnNames="prev_budget_id"
+                                               constraintName="fk_prev_budget"
+                                               referencedTableName="budgets"
+                                               referencedColumnNames="id" onDelete="SET NULL"/>
 
         <createTable tableName="budgets_categories">
             <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
@@ -33,9 +45,7 @@
             </column>
             <column name="spent" type="integer" defaultValueNumeric="0">
             </column>
-            <column name="balance" type="integer">
-                <constraints nullable="false"/>
-            </column>
         </createTable>
     </changeSet>
+    
 </databaseChangeLog>
