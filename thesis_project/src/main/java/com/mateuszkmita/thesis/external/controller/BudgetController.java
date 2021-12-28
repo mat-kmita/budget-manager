@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/budget/")
 @Validated
 @RequiredArgsConstructor
+@CrossOrigin
 public class BudgetController {
 
     private final BudgetServiceInterface budgetService;

@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/transaction/")
 @RequiredArgsConstructor
-@CrossOrigin(methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS}, origins = "*")
+@CrossOrigin
 public class TransactionsController {
 
     private final TransactionServiceInterface transactionService;

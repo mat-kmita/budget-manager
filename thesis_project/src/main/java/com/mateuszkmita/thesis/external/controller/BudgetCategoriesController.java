@@ -16,6 +16,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/budgetCategory/")
 @RequiredArgsConstructor
+@CrossOrigin
 public class BudgetCategoriesController {
 
     private final BudgetCategoryInteractor budgetCategoryService;
