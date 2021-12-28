@@ -2,7 +2,7 @@ package com.mateuszkmita.thesis;
 
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.external.controller.AccountsController;
-import com.mateuszkmita.thesis.external.controller.mapper.AccountUpdateMapper;
+import com.mateuszkmita.thesis.external.controller.mapper.AccountMapper;
 import com.mateuszkmita.thesis.external.repository.AccountRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.AccountType;
@@ -34,7 +34,7 @@ public class AccountsControllerTest {
     @MockBean
     AccountRepositoryInterface accountRepository;
     @MockBean
-    AccountUpdateMapper accountUpdateMapper;
+    AccountMapper accountMapper;
 
     private static final Account ACCOUNT_RECORD_1 = new Account(1, "Account #1", AccountType.CASH, "Cash", 0);
     private static final Account ACCOUNT_RECORD_2 = new Account(2, "Account #2", AccountType.CHECKING, "Checking account", 0);

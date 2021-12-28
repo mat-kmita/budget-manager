@@ -2,15 +2,13 @@ package com.mateuszkmita.thesis.core.interactor;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
-import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.BudgetCategoryRepositoryInterface;
 import com.mateuszkmita.thesis.external.repository.BudgetRepositoryInterface;
-import com.mateuszkmita.thesis.model.Budget;
-import com.mateuszkmita.thesis.model.BudgetCategory;
+import com.mateuszkmita.thesis.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -18,7 +16,8 @@ import java.util.Optional;
 public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface {
 
     private final BudgetCategoryRepositoryInterface budgetCategoryRepository;
-    private final TransactionServiceInterface transactionService;
+
+    private final BudgetRepositoryInterface budgetRepository;
 
     @Override
     public Optional<BudgetCategory> findBudgetCategory(int id) {
@@ -26,26 +25,59 @@ public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface 
     }
 
     @Override
-    public BudgetCategory updateBudgetCategoryEntity(BudgetCategory updatedEntity) {
-        if (updatedEntity.getId() == null) {
-            throw new IllegalArgumentException("Updated budget category must have an ID!");
-        }
-
-        return budgetCategoryRepository.save(updatedEntity);
+    public Optional<BudgetCategory> findBudgetCategoryByCategoryAndDate(Category category, LocalDate date) {
+        return budgetCategoryRepository.findByCategoryAndDate(category.getId(), date.getMonthValue(), date.getYear());
     }
 
-    public BudgetCategory calculateBudgetCategoryAmounts(BudgetCategory budgetCategory) {
-        Budget budget = budgetCategory.getBudget();
+    @Override
+    public BudgetCategory updateBudgetCategoryAmountById(int budgetId, int categoryId, int amount)
+            throws ResourceNotFoundException {
 
-        Optional<BudgetCategory> previousBudgetCategory = budgetCategoryRepository
-                .findFirstByCategory_IdAndBudget_DateBeforeOrderByBudget_DateDesc(budgetCategory.getCategory().getId(), budget.getDate());
+        Budget existing = this.budgetRepository.findById(budgetId)
+                .orElseThrow(() -> new ResourceNotFoundException("budget", budgetId));
 
-        int spent = transactionService.calculateAmountByCategoryAndDate(budgetCategory.getCategory(), budget.getDate().getMonthValue(), budget.getDate().getYear());
-        int amount = budgetCategory.getAmount();
-        return new BudgetCategory(budgetCategory.getId(), budget, budgetCategory.getCategory(),
-                previousBudgetCategory
-                        .map(BudgetCategory::getBalance)
-                        .orElse(0) + amount + spent,
-                spent, amount);
+        Optional<BudgetCategory> optionalBudgetCategory = existing.getBudgetCategories().stream().filter(budgetCategory -> budgetCategory.getCategory().getId() == categoryId).findFirst();
+
+        if (optionalBudgetCategory.isEmpty()) {
+            throw new ResourceNotFoundException("budget category", categoryId);
+        }
+
+        BudgetCategory budgetCategory = optionalBudgetCategory.get();
+        int oldAvailable = budgetCategory.available();
+
+        int change = amount - budgetCategory.getAmount();
+        budgetCategory.setAmount(amount);
+
+        int newAvailable = budgetCategory.available();
+
+        if (newAvailable < 0) {
+            int overspentChange = oldAvailable < 0 ? oldAvailable - newAvailable : newAvailable;
+            existing.setOverspentCategoriesAmountSum(existing.getOverspentCategoriesAmountSum() - overspentChange);
+        }
+
+        existing.updateBudgeted(change);
+
+        budgetRepository.save(existing);
+        return budgetCategory;
+    }
+
+    public BudgetCategory saveBudgetCategory(BudgetCategory budgetCategory) {
+        if (budgetCategory.getId() != null) {
+            throw new IllegalArgumentException("New budget category must not have an ID!");
+        }
+
+        budgetCategoryRepository.save(budgetCategory);
+        return budgetCategory;
+    }
+
+    public BudgetCategory addTransaction(BudgetCategory budgetCategory, Transaction transaction) {
+        if (budgetCategory.getId() == null) {
+            throw new IllegalArgumentException("Transaction ID must not be null! Transaction must already exist!");
+        }
+
+        // Register new expense in BudgetCategory object
+        budgetCategory.addTransaction(transaction);
+
+        return budgetCategory;
     }
 }

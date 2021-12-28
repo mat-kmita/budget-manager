@@ -7,12 +7,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.time.LocalDate;
+
 public interface TransactionsRepositoryInterface extends PagingAndSortingRepository<Transaction, Integer> {
     Page<Transaction> findTransactionByAccount_Id(int accountId, Pageable pageable);
 
-    @Query(value = "SELECT sum(t.amount) FROM transactions t JOIN categories c on t.category_id = c.id WHERE c.id = 1 AND EXTRACT(MONTH FROM t.date) = :month AND EXTRACT(YEAR FROM date) = :year", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(sum(t.amount), 0) FROM transactions t JOIN categories c on t.category_id = c.id WHERE c.id = 1 AND EXTRACT(MONTH FROM t.date) = :month AND EXTRACT(YEAR FROM date) = :year", nativeQuery = true)
     Integer findIncome(int month, int year);
 
     @Query(value = "SELECT COALESCE(SUM(t.amount), 0) FROM transactions t JOIN categories c on t.category_id = c.id WHERE c.id = :categoryId AND EXTRACT(MONTH FROM t.date) = :month AND EXTRACT(YEAR FROM date) = :year", nativeQuery = true)
     Integer findAmount(int categoryId, int month, int year);
+
+    @Query(value = """
+            SELECT t.*
+            FROM transactions t
+                JOIN categories c on t.category_id = c.id
+            WHERE c.id = :categoryId AND
+                EXTRACT(MONTH FROM t.date) = :month AND
+                EXTRACT(YEAR FROM date) = :year""",
+            nativeQuery = true)
+    Iterable<Transaction> findByCategoryIdAndMonthYear(int categoryId, int month, int year);
 }

@@ -14,4 +14,5 @@ public interface BudgetRepositoryInterface extends CrudRepository<Budget, Intege
     Optional<Budget> findByMonthAndYear(int month, int year);
 
     Optional<Budget> findFirstByDateBeforeOrderByDateDesc(LocalDate date);
+    Optional<Budget> findFirstByDateAfterOrderByDateAsc(LocalDate date);
 }

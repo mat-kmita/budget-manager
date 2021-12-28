@@ -1,7 +1,9 @@
 package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
-import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
+import com.mateuszkmita.thesis.core.interactor.BudgetCategoryInteractor;
+import com.mateuszkmita.thesis.core.service.BudgetServiceInterface;
+import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.external.controller.dto.budget.BudgetCategoryDto;
 import com.mateuszkmita.thesis.external.controller.dto.budget.BudgetCategoryUpdateDto;
 import com.mateuszkmita.thesis.external.controller.mapper.BudgetMapper;
@@ -16,16 +18,19 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class BudgetCategoriesController {
 
-    private final BudgetCategoryServiceInterface budgetCategoryService;
+    private final BudgetCategoryInteractor budgetCategoryService;
     private final BudgetMapper budgetMapper;
 
-    @PutMapping("/{budgetCategoryId}/")
-    public BudgetCategoryDto updateBudgetCategory(@PathVariable int budgetCategoryId,
+    private final CategoryServiceInterface categoryService;
+    private final BudgetServiceInterface budgetService;
+
+    @PutMapping("/budget/{budgetId}/category/{categoryId}")
+    public BudgetCategoryDto updateBudgetCategory(@PathVariable int budgetId,
+                                                  @PathVariable int categoryId,
                                                   @RequestBody @Valid BudgetCategoryUpdateDto requestDto)
             throws ResourceNotFoundException {
-        BudgetCategory existing = budgetCategoryService.findBudgetCategory(budgetCategoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("budget category", budgetCategoryId));
-        existing.setAmount(requestDto.budgetedAmount());
-        return budgetMapper.toDto(budgetCategoryService.updateBudgetCategoryEntity(existing));
+        return budgetMapper.toDto(
+                budgetCategoryService.updateBudgetCategoryAmountById(budgetId, categoryId, requestDto.budgetedAmount()));
+
     }
 }

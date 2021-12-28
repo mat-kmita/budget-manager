@@ -32,6 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController()
 @RequestMapping("/api/v1/account/")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AccountsController {
 
     private final AccountServiceInterface accountService;
@@ -75,6 +76,7 @@ public class AccountsController {
     }
 
     @GetMapping("/{accountId}/transaction/")
+    @CrossOrigin(origins = "http://localhost:3000/")
     public PageDto<TransactionDto> getTransactionsPage(@PathVariable int accountId,
                                                        @RequestParam(name = "page", required = false, defaultValue = "0") int page,
                                                        @RequestParam(name = "length", required = false, defaultValue = "100") int length,
