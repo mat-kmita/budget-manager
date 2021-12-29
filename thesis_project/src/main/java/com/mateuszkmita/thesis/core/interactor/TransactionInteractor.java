@@ -40,9 +40,13 @@ public class TransactionInteractor implements TransactionServiceInterface {
         account.setBalance(account.getBalance() + transaction.getAmount());
 
         Budget budget = budgetService.findBudget(transaction.getDate().getMonthValue(), transaction.getDate().getYear())
-                .orElseThrow(() -> new IllegalArgumentException("Nie można dodawać transakcji gdy nie ma budżetu!"));
+                .orElseGet(() -> budgetService.createBudget(transaction.getDate().getMonthValue(), transaction.getDate().getYear()));
 
-        BudgetCategory budgetCategory = budget.getBudgetCategories().stream().filter(c -> c.getCategory().equals(transaction.getCategory())).findFirst().orElseThrow(() -> new RuntimeException("error"));
+        BudgetCategory budgetCategory = budget.getBudgetCategories()
+                .stream()
+                .filter(c -> c.getCategory().equals(transaction.getCategory()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Did not found transaction category in this month's budget!"));
         budgetCategoryService.addTransaction(budgetCategory, transaction);
 
         transaction.setBudgetCategory(budgetCategory);
@@ -57,20 +61,23 @@ public class TransactionInteractor implements TransactionServiceInterface {
             throw new IllegalArgumentException("Transaction update must not change the ID!");
         }
 
-        if (updatedTransaction.getAccount().getId() != oldTransaction.getAccount().getId()) {
+        if (!Objects.equals(updatedTransaction.getAccount().getId(), oldTransaction.getAccount().getId())) {
             throw new IllegalArgumentException("Transactions update must not change account!");
         }
 
         Account account = updatedTransaction.getAccount();
         account.setBalance(account.getBalance() - oldTransaction.getAmount() + updatedTransaction.getAmount());
 
-        BudgetCategory updatedBudgetCategory = budgetCategoryService.findBudgetCategoryByCategoryAndDate(
-                updatedTransaction.getCategory(), updatedTransaction.getDate()).orElseThrow(() -> new IllegalArgumentException());
+        BudgetCategory updatedBudgetCategory = budgetCategoryService
+                .findBudgetCategoryByCategoryAndDate(updatedTransaction.getCategory(), updatedTransaction.getDate())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found in budget!"));
+
         if (!oldTransaction.getCategory().equals(updatedTransaction.getCategory())
                 || oldTransaction.getDate().getMonthValue() != updatedTransaction.getDate().getMonthValue()
                 || oldTransaction.getDate().getYear() != updatedTransaction.getDate().getYear()) {
-            BudgetCategory oldBudgedCategory = budgetCategoryService.findBudgetCategoryByCategoryAndDate(
-                    oldTransaction.getCategory(), oldTransaction.getDate()).orElseThrow(() -> new IllegalArgumentException());
+            BudgetCategory oldBudgedCategory = budgetCategoryService
+                    .findBudgetCategoryByCategoryAndDate(oldTransaction.getCategory(), oldTransaction.getDate())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found in budget!"));
             oldBudgedCategory.removeTransaction(oldTransaction);
             updatedBudgetCategory.addTransaction(updatedTransaction);
         }
