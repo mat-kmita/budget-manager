@@ -16,6 +16,4 @@ public interface TransactionServiceInterface {
     Transaction saveTransactionEntity(Transaction transaction);
     Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction);
     void deleteTransaction(Transaction transaction);
-    int calculateIncomeByMonthAndYear(int monthValue, int year);
-    Iterable<Transaction> findByCategoryAndDate(Category category, LocalDate date);
 }

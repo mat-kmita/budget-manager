@@ -23,7 +23,6 @@ public class TransactionInteractor implements TransactionServiceInterface {
     private final AccountServiceInterface accountService;
     private final BudgetServiceInterface budgetService;
     private final BudgetCategoryServiceInterface budgetCategoryService;
-    private final CategoryServiceInterface categoryService;
 
     @Override
     public Optional<Transaction> findTransactionById(int id) {
@@ -94,16 +93,6 @@ public class TransactionInteractor implements TransactionServiceInterface {
         transaction.getBudgetCategory().removeTransaction(transaction);
 
         transactionsRepository.delete(transaction);
-    }
-
-    @Override
-    public int calculateIncomeByMonthAndYear(int monthValue, int year) {
-        return transactionsRepository.findIncome(monthValue, year);
-    }
-
-    @Override
-    public Iterable<Transaction> findByCategoryAndDate(Category category, LocalDate date) {
-        return transactionsRepository.findByCategoryIdAndMonthYear(category.getId(), date.getMonthValue(), date.getYear());
     }
 
     @Override

@@ -62,11 +62,4 @@ public class BudgetInteractor implements BudgetServiceInterface {
         // TODO budget Category interactor powinien sie tym zajmowac
         return budgetRepository.save(persistedBudget);
     }
-
-    @Override
-    public int calculateAmountAvailable(int budgetId)
-            throws ResourceNotFoundException {
-
-        return 0;
-    }
 }
