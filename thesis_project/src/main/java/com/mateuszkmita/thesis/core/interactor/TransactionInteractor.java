@@ -1,8 +1,14 @@
 package com.mateuszkmita.thesis.core.interactor;
 
-import com.mateuszkmita.thesis.core.service.*;
+import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
+import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
+import com.mateuszkmita.thesis.core.service.BudgetServiceInterface;
+import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
-import com.mateuszkmita.thesis.model.*;
+import com.mateuszkmita.thesis.model.Account;
+import com.mateuszkmita.thesis.model.Budget;
+import com.mateuszkmita.thesis.model.BudgetCategory;
+import com.mateuszkmita.thesis.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,10 +51,8 @@ public class TransactionInteractor implements TransactionServiceInterface {
                 .stream()
                 .filter(c -> c.getCategory().equals(transaction.getCategory()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Did not found transaction category in this month's budget!"));
+                .orElseThrow(() -> new RuntimeException("Did not find transaction category in this month's budget!"));
         budgetCategoryService.addTransaction(budgetCategory, transaction);
-
-        transaction.setBudgetCategory(budgetCategory);
 
         return transactionsRepository.save(transaction);
     }
@@ -78,13 +81,13 @@ public class TransactionInteractor implements TransactionServiceInterface {
             BudgetCategory oldBudgedCategory = budgetCategoryService
                     .findBudgetCategoryByCategoryAndDate(oldTransaction.getCategory(), oldTransaction.getDate())
                     .orElseThrow(() -> new IllegalArgumentException("Category not found in budget!"));
-            oldBudgedCategory.removeTransaction(oldTransaction);
-            updatedBudgetCategory.addTransaction(updatedTransaction);
+            budgetCategoryService.removeTransaction(oldBudgedCategory, oldTransaction);
+            budgetCategoryService.addTransaction(updatedBudgetCategory, updatedTransaction);
         }
 
         if (oldTransaction.getAmount() != updatedTransaction.getAmount()) {
-            updatedBudgetCategory.removeTransaction(oldTransaction);
-            updatedBudgetCategory.addTransaction(updatedTransaction);
+            budgetCategoryService.removeTransaction(updatedBudgetCategory, oldTransaction);
+            budgetCategoryService.addTransaction(updatedBudgetCategory, updatedTransaction);
         }
 
         return transactionsRepository.save(updatedTransaction);
@@ -97,9 +100,18 @@ public class TransactionInteractor implements TransactionServiceInterface {
         account.setBalance(account.getBalance() - transaction.getAmount());
         accountService.updateAccountEntity(account);
 
-        transaction.getBudgetCategory().removeTransaction(transaction);
+        BudgetCategory budgetCategory = budgetCategoryService
+                .findBudgetCategoryByCategoryAndDate(transaction.getCategory(), transaction.getDate())
+                        .orElseThrow(() -> new IllegalArgumentException("Transaction not found in budget!"));
+        budgetCategoryService.removeTransaction(budgetCategory, transaction);
 
         transactionsRepository.delete(transaction);
+    }
+
+    @Override
+    public void deleteTransactionsByAccountId(int accountId) {
+        List<Transaction> transactions = transactionsRepository.findAllByAccount_Id(accountId);
+        transactions.forEach(this::deleteTransaction);
     }
 
     @Override

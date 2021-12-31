@@ -50,11 +50,6 @@ public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface 
 
         int newAvailable = budgetCategory.available();
 
-        if (newAvailable < 0) {
-            int overspentChange = oldAvailable < 0 ? oldAvailable - newAvailable : newAvailable;
-            existing.setOverspentCategoriesAmountSum(existing.getOverspentCategoriesAmountSum() - overspentChange);
-        }
-
         existing.updateBudgeted(change);
 
         budgetRepository.save(existing);
@@ -71,13 +66,15 @@ public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface 
     }
 
     public BudgetCategory addTransaction(BudgetCategory budgetCategory, Transaction transaction) {
-        if (budgetCategory.getId() == null) {
-            throw new IllegalArgumentException("Transaction ID must not be null! Transaction must already exist!");
-        }
-
         // Register new expense in BudgetCategory object
-        budgetCategory.addTransaction(transaction);
+        budgetCategory.setSpent(budgetCategory.getSpent() + transaction.getAmount());
 
-        return budgetCategory;
+        return budgetCategoryRepository.save(budgetCategory);
+    }
+
+    @Override
+    public BudgetCategory removeTransaction(BudgetCategory budgetCategory, Transaction transaction) {
+        budgetCategory.setSpent(budgetCategory.getSpent() - transaction.getAmount());
+        return budgetCategoryRepository.save(budgetCategory);
     }
 }

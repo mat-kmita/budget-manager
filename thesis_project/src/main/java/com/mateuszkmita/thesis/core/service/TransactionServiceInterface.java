@@ -1,12 +1,9 @@
 package com.mateuszkmita.thesis.core.service;
 
-import com.mateuszkmita.thesis.model.Category;
 import com.mateuszkmita.thesis.model.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.Optional;
 
 public interface TransactionServiceInterface {
@@ -16,4 +13,5 @@ public interface TransactionServiceInterface {
     Transaction saveTransactionEntity(Transaction transaction);
     Transaction updateTransactionEntity(Transaction oldTransaction, Transaction updatedTransaction);
     void deleteTransaction(Transaction transaction);
+    void deleteTransactionsByAccountId(int accountId);
 }

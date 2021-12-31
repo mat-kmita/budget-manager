@@ -7,6 +7,7 @@ import com.mateuszkmita.thesis.model.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class CategoryInteractor implements CategoryServiceInterface {
 
     private final CategoryRepositoryInterface categoryRepository;
+    private static Category INCOMES_CATEGORY = null;
 
     @Override
     public Optional<Category> findCategoryById(int id) {
@@ -45,16 +47,34 @@ public class CategoryInteractor implements CategoryServiceInterface {
             throw new IllegalArgumentException("Updated category must have an ID!");
         }
 
+        if (Objects.equals(updatedEntity.getId(), INCOMES_CATEGORY.getId())) {
+            throw new IllegalArgumentException("Category " + INCOMES_CATEGORY.getName() + " cannot be updated!");
+        }
+
         return categoryRepository.save(updatedEntity);
     }
 
     @Override
     public void deleteCategoryById(int id) throws ResourceNotFoundException {
+        if (id == INCOMES_CATEGORY.getId()) {
+            throw new IllegalArgumentException("Category " + INCOMES_CATEGORY.getName() + " cannot be updated!");
+        }
+
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty()) {
             throw new ResourceNotFoundException("category", id);
         }
 
         categoryRepository.delete(optionalCategory.get());
+    }
+
+    @Override
+    public Category getIncomesCategory() {
+        if (INCOMES_CATEGORY == null) {
+            INCOMES_CATEGORY = categoryRepository.findIncomesCategory()
+                    .orElseThrow(() -> new IllegalStateException("Incomes category doesn't exist!"));
+        }
+
+        return INCOMES_CATEGORY;
     }
 }
