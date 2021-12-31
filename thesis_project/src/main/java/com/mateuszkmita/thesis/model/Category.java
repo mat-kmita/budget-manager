@@ -1,5 +1,6 @@
 package com.mateuszkmita.thesis.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @Table(name = "categories")
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

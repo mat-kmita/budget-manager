@@ -12,4 +12,5 @@ public interface CategoryServiceInterface {
     Category saveCategoryEntity(Category entity);
     Category updateCategoryEntity(Category updatedEntity);
     void deleteCategoryById(int id) throws ResourceNotFoundException;
+    Category getIncomesCategory();
 }

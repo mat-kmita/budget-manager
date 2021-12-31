@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -51,15 +49,14 @@ public class BudgetInteractor implements BudgetServiceInterface {
         Optional<Budget> previousBudget = budgetRepository.findFirstByDateBeforeOrderByDateDesc(firstDayOfMonth);
         Optional<Budget> nextBudget = budgetRepository.findFirstByDateAfterOrderByDateAsc(firstDayOfMonth);
 
-        Budget budget = new Budget(null, firstDayOfMonth, null, previousBudget.orElse(null), nextBudget.orElse(null), 0, 0, 0);
+        Budget budget = new Budget(null, firstDayOfMonth, null, previousBudget.orElse(null), nextBudget.orElse(null), 0);
         List<BudgetCategory> budgetCategories = StreamSupport.stream(categoryService.findAllCategories().spliterator(), false)
-                .map(c -> new BudgetCategory(null, budget, c, 0, Set.of())).collect(Collectors.toList());
+                .map(c -> new BudgetCategory(null, budget, c, 0)).collect(Collectors.toList());
         budget.setBudgetCategories(budgetCategories);
         nextBudget.ifPresent(b -> b.setPreviousBudget(budget));
         Budget persistedBudget = budgetRepository.save(budget);
         nextBudget.ifPresent(budgetRepository::save);
 
-        // TODO budget Category interactor powinien sie tym zajmowac
         return budgetRepository.save(persistedBudget);
     }
 }

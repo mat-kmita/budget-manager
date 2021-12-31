@@ -1,4 +1,6 @@
 package com.mateuszkmita.thesis.external.controller.dto.account;
 
-public record AccountDto() {
+import com.mateuszkmita.thesis.model.AccountType;
+
+public record AccountDto(int id, String name, AccountType accountType, String description, int balance) {
 }

@@ -2,13 +2,11 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
-      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
     <changeSet id="create categories" author="Mateusz Kmita">
-        <createTable tableName="categories">
-            <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
+        <createTable  tableName="categories">
+            <column name="id" type="integer">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar">
@@ -16,12 +14,30 @@
             </column>
         </createTable>
 
+        <addAutoIncrement tableName="categories" columnName="id" generationType="BY DEFAULT"/>
+
         <addColumn tableName="transactions">
             <column name="category_id" type="integer">
                 <constraints foreignKeyName="fk_category_id" nullable="false" references="categories(id)"/>
             </column>
         </addColumn>
         
+        <loadData tableName="categories" file="db/changelog/data/categories-default.csv">
+            <column header="name" name="name" type="STRING"/>
+        </loadData>
+
+    </changeSet>
+
+    <changeSet id="add incomes category" author="Mateusz Kmita">
+        <delete tableName="categories">
+            <where></where>
+        </delete>
+
+        <insert tableName="categories">
+            <column name="id">1</column>
+            <column name="name">Incomes</column>
+        </insert>
+
         <loadData tableName="categories" file="db/changelog/data/categories-default.csv">
             <column header="name" name="name" type="STRING"/>
         </loadData>

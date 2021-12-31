@@ -2,9 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd
-      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
 
     <changeSet id="create budgets" author="Mateusz Kmita">
         <createTable tableName="budgets">
@@ -27,9 +25,9 @@
             </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="budgets" baseColumnNames="prev_budget_id"
-                                               constraintName="fk_prev_budget"
-                                               referencedTableName="budgets"
-                                               referencedColumnNames="id" onDelete="SET NULL"/>
+                                 constraintName="fk_prev_budget"
+                                 referencedTableName="budgets"
+                                 referencedColumnNames="id" onDelete="SET NULL"/>
 
         <createTable tableName="budgets_categories">
             <column name="id" type="integer" autoIncrement="true" generationType="ALWAYS">
@@ -47,5 +45,10 @@
             </column>
         </createTable>
     </changeSet>
-    
+
+    <changeSet id="remove unused columns" author="Mateusz Kmita">
+        <dropColumn tableName="budgets" columnName="incomes_sum"/>
+        <dropColumn tableName="budgets" columnName="overspent_sum"/>
+    </changeSet>
+
 </databaseChangeLog>
