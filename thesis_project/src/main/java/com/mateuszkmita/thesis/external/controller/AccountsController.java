@@ -5,7 +5,9 @@ import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
+import com.mateuszkmita.thesis.external.controller.dto.account.AccountDto;
 import com.mateuszkmita.thesis.external.controller.dto.account.AccountUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.account.NewAccountDto;
 import com.mateuszkmita.thesis.external.controller.dto.page.PageDto;
 import com.mateuszkmita.thesis.external.controller.dto.transaction.NewTransactionDto;
 import com.mateuszkmita.thesis.external.controller.dto.transaction.TransactionDto;
@@ -16,10 +18,7 @@ import com.mateuszkmita.thesis.external.controller.mapper.AccountMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.PageDtoMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.TransactionMapper;
 import com.mateuszkmita.thesis.external.controller.mapper.TransferMapper;
-import com.mateuszkmita.thesis.model.Account;
-import com.mateuszkmita.thesis.model.Category;
-import com.mateuszkmita.thesis.model.Transaction;
-import com.mateuszkmita.thesis.model.Transfer;
+import com.mateuszkmita.thesis.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -28,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 @RestController()
@@ -45,13 +46,18 @@ public class AccountsController {
     private final CategoryServiceInterface categoryService;
 
     @GetMapping("/")
-    public Iterable<Account> getAllAccounts() {
-        return accountService.findAllAccounts();
+    public Iterable<AccountDto> getAllAccounts() {
+        return StreamSupport
+                .stream(accountService.findAllAccounts().spliterator(), false)
+                .map(accountMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/")
-    public ResponseEntity<Account> createAccount(@RequestBody Account account) { // TODO Create AccountDto
-        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.saveAccountEntity(account));
+    public ResponseEntity<AccountDto> createAccount(@RequestBody @Valid NewAccountDto requestDto) {
+        Account account = accountMapper.toEntity(requestDto);
+        Account savedAccount = accountService.saveAccountEntity(account);
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountMapper.toDto(savedAccount));
     }
 
     @PutMapping("/{accountId}")

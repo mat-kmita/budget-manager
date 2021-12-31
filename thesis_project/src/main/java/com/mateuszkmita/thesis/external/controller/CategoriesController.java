@@ -37,6 +37,7 @@ public class CategoriesController {
     @PutMapping("/{categoryId}/")
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody @Valid CategoryUpdateDto requestDto,
                                                       @PathVariable(name = "categoryId") int id) {
+
         Category category = categoryMapper.updatedCategoryDtoToEntity(requestDto);
         category.setId(id);
         Category updatedCategory = categoryService.updateCategoryEntity(category);

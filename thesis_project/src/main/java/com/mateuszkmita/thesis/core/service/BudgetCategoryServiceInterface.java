@@ -15,6 +15,7 @@ public interface BudgetCategoryServiceInterface {
             throws ResourceNotFoundException;
 
     BudgetCategory addTransaction(BudgetCategory budgetCategory, Transaction transaction);
+    BudgetCategory removeTransaction(BudgetCategory budgetCategory, Transaction transaction);
 
     BudgetCategory saveBudgetCategory(BudgetCategory budgetCategory);
 

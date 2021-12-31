@@ -2,11 +2,18 @@ package com.mateuszkmita.thesis.core.interactor;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
+import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
+import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
 import com.mateuszkmita.thesis.external.repository.AccountRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
+import com.mateuszkmita.thesis.model.Transaction;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -14,6 +21,10 @@ import java.util.Optional;
 public class AccountInteractor implements AccountServiceInterface {
 
     private final AccountRepositoryInterface accountRepository;
+    @Setter
+    @Autowired
+    private TransactionServiceInterface transactionService;
+    private final CategoryServiceInterface categoryService;
 
     @Override
     public Iterable<Account> findAllAccounts() {
@@ -27,6 +38,19 @@ public class AccountInteractor implements AccountServiceInterface {
 
     @Override
     public Account saveAccountEntity(Account account) {
+        if (account.getBalance() > 0) {
+            Transaction initialTransaction = new Transaction();
+            initialTransaction.setAccount(account);
+            initialTransaction.setAmount(account.getBalance());
+            initialTransaction.setCategory(categoryService.getIncomesCategory());
+            initialTransaction.setPayee("Initial transaction");
+            initialTransaction.setDate(LocalDate.now());
+            initialTransaction.setMemo("Initial balance of this account");
+
+            account.setBalance(0);
+
+            transactionService.saveTransactionEntity(initialTransaction);
+        }
         return accountRepository.save(account);
     }
 
@@ -36,9 +60,11 @@ public class AccountInteractor implements AccountServiceInterface {
     }
 
     @Override
+    @Transactional
     public void deleteAccountById(int accountId) throws ResourceNotFoundException {
-        Optional<Account> optionalAccount = findAccountById(accountId);
-
-        accountRepository.delete(optionalAccount.orElseThrow(() -> new ResourceNotFoundException("account", accountId)));
+        Account account = findAccountById(accountId)
+                .orElseThrow(() -> new ResourceNotFoundException("account", accountId));
+        transactionService.deleteTransactionsByAccountId(account.getId());
+        accountRepository.delete(account);
     }
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "budgets")
@@ -33,12 +34,6 @@ public class Budget {
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "previousBudget")
     private Budget nextBudget;
-
-    @Column(name = "overspent_sum")
-    private int overspentCategoriesAmountSum;
-
-    @Column(name = "incomes_sum")
-    private int incomesSum;
 
     @Column(name = "budgeted_amount")
     private int budgetedAmount;
