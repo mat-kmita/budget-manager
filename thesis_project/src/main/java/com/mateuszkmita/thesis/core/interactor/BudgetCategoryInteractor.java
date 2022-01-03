@@ -43,16 +43,11 @@ public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface 
         }
 
         BudgetCategory budgetCategory = optionalBudgetCategory.get();
-        int oldAvailable = budgetCategory.available();
-
         int change = amount - budgetCategory.getAmount();
         budgetCategory.setAmount(amount);
-
-        int newAvailable = budgetCategory.available();
-
         existing.updateBudgeted(change);
-
         budgetRepository.save(existing);
+
         return budgetCategory;
     }
 

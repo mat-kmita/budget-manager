@@ -71,9 +71,14 @@ public class TransactionInteractor implements TransactionServiceInterface {
         Account account = updatedTransaction.getAccount();
         account.setBalance(account.getBalance() - oldTransaction.getAmount() + updatedTransaction.getAmount());
 
-        BudgetCategory updatedBudgetCategory = budgetCategoryService
-                .findBudgetCategoryByCategoryAndDate(updatedTransaction.getCategory(), updatedTransaction.getDate())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found in budget!"));
+        Budget budget = budgetService.findBudget(updatedTransaction.getDate().getMonthValue(), updatedTransaction.getDate().getYear())
+                .orElseGet(() -> budgetService.createBudget(updatedTransaction.getDate().getMonthValue(), updatedTransaction.getDate().getYear()));
+
+        BudgetCategory updatedBudgetCategory = budget.getBudgetCategories()
+                .stream()
+                .filter(c -> c.getCategory().equals(updatedTransaction.getCategory()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Did not find transaction category in this month's budget!"));
 
         if (!oldTransaction.getCategory().equals(updatedTransaction.getCategory())
                 || oldTransaction.getDate().getMonthValue() != updatedTransaction.getDate().getMonthValue()
@@ -81,8 +86,10 @@ public class TransactionInteractor implements TransactionServiceInterface {
             BudgetCategory oldBudgedCategory = budgetCategoryService
                     .findBudgetCategoryByCategoryAndDate(oldTransaction.getCategory(), oldTransaction.getDate())
                     .orElseThrow(() -> new IllegalArgumentException("Category not found in budget!"));
+
             budgetCategoryService.removeTransaction(oldBudgedCategory, oldTransaction);
             budgetCategoryService.addTransaction(updatedBudgetCategory, updatedTransaction);
+            return transactionsRepository.save(updatedTransaction);
         }
 
         if (oldTransaction.getAmount() != updatedTransaction.getAmount()) {

@@ -62,7 +62,7 @@ public class AccountsController {
 
     @PutMapping("/{accountId}")
     public ResponseEntity<Account> updateAccount(@PathVariable(name = "accountId") int accountId, @RequestBody AccountUpdateDto accountUpdateDto)
-            throws ResourceNotFoundException { //TODO Use AccountDto
+            throws ResourceNotFoundException {
         Optional<Account> existingAccount = accountService.findAccountById(accountId);
 
         if (existingAccount.isEmpty()) {
