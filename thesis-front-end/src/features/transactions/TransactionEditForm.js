@@ -13,7 +13,7 @@ const TransactionsEditForm = ({visible, onCreate, onCancel, transaction}) => {
             date: moment(transaction?.date, "YYYY-MM-DD"),
             payee: transaction?.payee,
             memo: transaction?.memo,
-            amount: transaction?.amount,
+            amount: transaction?.amount / 100,
         })
     }, [visible])
 
@@ -63,8 +63,8 @@ const TransactionsEditForm = ({visible, onCreate, onCancel, transaction}) => {
                 <Form.Item
                     label="Amount (positive for income, negative for expense)"
                     name="amount">
-                    <InputNumber/>
-                </Form.Item>
+                    <InputNumber precision={2}/>
+                </Form.Item> 
                 <Form.Item
                     label="Category"
                     name="categoryId">

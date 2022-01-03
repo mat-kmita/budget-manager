@@ -59,7 +59,7 @@ const TransactionAddForm = ({visible, onCreate, onCancel}) => {
                         }
                     ]}>
 
-                    <InputNumber/>
+                    <InputNumber precision={2}/>
                 </Form.Item>
                 <Form.Item
                     name="payee"
@@ -94,7 +94,7 @@ const AddTransactionComponent = () => {
     const [visible, setVisible] = useState(false);
 
     const success = (id) => {
-        message.success(`Succesfully created transaction with ID ${id}`)
+        message.success(`Succesfully created transaction`)
     }
 
     const error = (err) => {

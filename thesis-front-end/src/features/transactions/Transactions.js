@@ -194,8 +194,10 @@ const TransactionsTable = (() => {
                     key="memo"/>
                 <Column
                     title="Amount"
-                    dataIndex="amount"
-                    key="amount"/>
+                    key="amount"
+                    render={(text, record) => {
+                        return <p> { record.amount / 100} </p>
+                    }}/>
                 <Column
                     title="Delete"
                     key="delete"

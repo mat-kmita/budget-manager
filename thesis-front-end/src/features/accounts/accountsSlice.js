@@ -56,14 +56,18 @@ export const deleteAccount = createAsyncThunk('accounts/deleteAccount', async (a
 })
 
 export const addNewAccount = createAsyncThunk('accounts/addNewAccount', async (account) => {
-    const response = await axios.post("http://localhost:8080/api/v1/account/", account);
+    console.log('NEW ACCOUNT')
+    console.dir(account)
+    const requestData = {
+        ...account,
+        initialBalance: account.initialBalance * 100
+    }
+    console.dir(requestData)
+    const response = await axios.post("http://localhost:8080/api/v1/account/", requestData);
     return response.data
 })
 
 export const editAccount = createAsyncThunk('accounts/editAccount', async ({accountId, data}) => {
-    console.log('will edit account with id', accountId)
-    console.log('new data: ')
-    console.dir(data)
     const response = await axios.put(`http://localhost:8080/api/v1/account/${accountId}/`, data)
     return response.data
 })

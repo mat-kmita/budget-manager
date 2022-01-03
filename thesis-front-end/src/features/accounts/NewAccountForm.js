@@ -46,7 +46,7 @@ const EditForm = ({visible, onCreate, onCancel, transaction}) => {
                 <Form.Item
                     label="Initial balance"
                     name="initialBalance">
-                    <InputNumber/>
+                    <InputNumber precision={2}/>
                 </Form.Item>
                 <Form.Item
                     label="Account type"

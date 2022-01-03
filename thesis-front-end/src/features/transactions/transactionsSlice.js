@@ -68,6 +68,7 @@ export const editTransaction = createAsyncThunk('transactions/editTransaction', 
     const yearPart = date.getFullYear()
     const formatedDate = `${dayPart}-${monthPart}-${yearPart}`
     payload.date = formatedDate
+    payload.amount = payload.amount * 100
     const result = await axios.put(`http://localhost:8080/api/v1/transaction/${id}/`, payload)
     return result
 })
@@ -84,6 +85,7 @@ export const addNewTransaction = createAsyncThunk('transactions/addNewTransactio
     const yearPart = date.getFullYear()
     const formatedDate = `${dayPart}-${monthPart}-${yearPart}`
     data.payload.date = formatedDate
+    data.payload.amount = data.payload.amount * 100
     const response = await axios.post(`http://localhost:8080/api/v1/account/${data.accountId}/transaction/`, data.payload);
     return response.data
 })
