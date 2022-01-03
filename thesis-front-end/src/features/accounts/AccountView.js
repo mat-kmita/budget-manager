@@ -86,7 +86,7 @@ const AccountView = () => {
                         <Statistic title="Account type" value={account?.accountType}/>
                         <Statistic
                             title="Balance"
-                            value={account?.balance}
+                            value={account?.balance / 100}
                             prefix="$"
                             style={{
                                 margin: '0 32px',
