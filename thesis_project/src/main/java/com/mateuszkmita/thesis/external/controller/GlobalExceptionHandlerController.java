@@ -1,5 +1,6 @@
 package com.mateuszkmita.thesis.external.controller;
 
+import com.mateuszkmita.thesis.core.exception.CategoryDeleteException;
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
 import org.springframework.http.HttpStatus;
@@ -44,5 +45,15 @@ public class GlobalExceptionHandlerController {
         ProcedureResultDto procedureResultDto = new ProcedureResultDto(message);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(procedureResultDto);
+    }
+
+    @ExceptionHandler({
+            CategoryDeleteException.class
+    })
+    @ResponseBody
+    public ResponseEntity<ProcedureResultDto> categoryDeleteExceptionHandler(CategoryDeleteException e) {
+        ProcedureResultDto procedureResultDto = new ProcedureResultDto(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(procedureResultDto);
     }
 }

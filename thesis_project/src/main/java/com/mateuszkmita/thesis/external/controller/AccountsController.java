@@ -126,6 +126,7 @@ public class AccountsController {
                     Account payeeAccount = transfer.getAccount();
                     if (accountId == transfer.getAccount().getId()) {
                         payeeAccount = transfer.getSecondAccount();
+                        transfer.setAmount(-transfer.getAmount());
                     }
 
                     return transferMapper.entityToDto(transfer, payeeAccount);

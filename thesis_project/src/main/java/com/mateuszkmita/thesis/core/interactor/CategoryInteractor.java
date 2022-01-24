@@ -1,21 +1,39 @@
 package com.mateuszkmita.thesis.core.interactor;
 
+import com.mateuszkmita.thesis.core.exception.CategoryDeleteException;
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
+import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.external.repository.CategoryRepositoryInterface;
+import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
+import com.mateuszkmita.thesis.model.BudgetCategory;
 import com.mateuszkmita.thesis.model.Category;
-import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class CategoryInteractor implements CategoryServiceInterface {
 
     private final CategoryRepositoryInterface categoryRepository;
-    private static Category INCOMES_CATEGORY = null;
+    private final BudgetCategoryServiceInterface budgetCategoryService;
+    private final TransactionsRepositoryInterface transactionsRepository;
+
+    private final Category incomesCategory;
+
+    public CategoryInteractor(CategoryRepositoryInterface categoryRepository,
+                              BudgetCategoryServiceInterface budgetCategoryService,
+                              TransactionsRepositoryInterface transactionsRepository) {
+        this.categoryRepository = categoryRepository;
+        this.budgetCategoryService = budgetCategoryService;
+
+        incomesCategory = categoryRepository.findIncomesCategory()
+                .orElseThrow(() -> new IllegalStateException("Incomes category doesn't exist!"));
+        this.transactionsRepository = transactionsRepository;
+    }
 
     @Override
     public Optional<Category> findCategoryById(int id) {
@@ -33,12 +51,16 @@ public class CategoryInteractor implements CategoryServiceInterface {
     }
 
     @Override
-    public Category saveCategoryEntity(Category entity) {
+    @Transactional
+    public CategoryCreationResult saveCategoryEntity(Category entity) {
         if (entity.getId() != null) {
             throw new IllegalArgumentException("New category must not have an ID!");
         }
 
-        return categoryRepository.save(entity);
+        Category persistedCategory = categoryRepository.save(entity);
+        Iterable<BudgetCategory> persistedBudgetCategories = budgetCategoryService.createAllForCategory(entity);
+
+        return new CategoryCreationResult(persistedCategory, persistedBudgetCategories);
     }
 
     @Override
@@ -47,34 +69,34 @@ public class CategoryInteractor implements CategoryServiceInterface {
             throw new IllegalArgumentException("Updated category must have an ID!");
         }
 
-        if (Objects.equals(updatedEntity.getId(), INCOMES_CATEGORY.getId())) {
-            throw new IllegalArgumentException("Category " + INCOMES_CATEGORY.getName() + " cannot be updated!");
+        if (Objects.equals(updatedEntity.getId(), incomesCategory.getId())) {
+            throw new IllegalArgumentException("Category " + incomesCategory.getName() + " cannot be updated!");
         }
 
         return categoryRepository.save(updatedEntity);
     }
 
     @Override
+    @Transactional
     public void deleteCategoryById(int id) throws ResourceNotFoundException {
-        if (id == INCOMES_CATEGORY.getId()) {
-            throw new IllegalArgumentException("Category " + INCOMES_CATEGORY.getName() + " cannot be updated!");
+        if (id == incomesCategory.getId()) {
+            throw new IllegalArgumentException("Category " + incomesCategory.getName() + " cannot be updated!");
         }
 
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isEmpty()) {
-            throw new ResourceNotFoundException("category", id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("category", id));
+
+        if (transactionsRepository.countByCategory_Id(category.getId()) > 0) {
+            throw new CategoryDeleteException(category);
         }
 
-        categoryRepository.delete(optionalCategory.get());
+        categoryRepository.delete(category);
     }
 
     @Override
     public Category getIncomesCategory() {
-        if (INCOMES_CATEGORY == null) {
-            INCOMES_CATEGORY = categoryRepository.findIncomesCategory()
-                    .orElseThrow(() -> new IllegalStateException("Incomes category doesn't exist!"));
-        }
-
-        return INCOMES_CATEGORY;
+        return this.incomesCategory;
     }
+
+    public record CategoryCreationResult(Category newCategory, Iterable<BudgetCategory> newBudgetCategories) {}
 }

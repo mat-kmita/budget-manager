@@ -1,6 +1,7 @@
 package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
+import com.mateuszkmita.thesis.core.interactor.CategoryInteractor;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.external.controller.dto.category.CategoryDto;
 import com.mateuszkmita.thesis.external.controller.dto.category.CategoryUpdateDto;
@@ -30,8 +31,11 @@ public class CategoriesController {
 
     @PostMapping("")
     public ResponseEntity<CategoryDto> addCategory(@RequestBody @Valid NewCategoryDto requestDto) {
-        Category category = categoryService.saveCategoryEntity(categoryMapper.newCategoryDtoToEntity(requestDto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryMapper.toDto(category));
+        CategoryInteractor.CategoryCreationResult operationResult = categoryService
+                .saveCategoryEntity(categoryMapper.newCategoryDtoToEntity(requestDto));
+
+        CategoryDto dto = categoryMapper.toDto(operationResult.newCategory(), operationResult.newBudgetCategories());
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping("/{categoryId}/")

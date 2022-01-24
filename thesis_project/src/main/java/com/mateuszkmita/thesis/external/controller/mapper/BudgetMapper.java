@@ -15,6 +15,8 @@ public interface BudgetMapper {
     @Mapping(target = "month", expression = "java(budget.getDate().getMonthValue())")
     @Mapping(target = "year", source = "budget.date.year")
     @Mapping(target = "available", expression = "java(budget.available())")
+    @Mapping(target = "previousBudgetId", source = "budget.previousBudget.id")
+    @Mapping(target = "nextBudgetId", source = "budget.nextBudget.id")
     BudgetDto toDto(Budget budget);
 
     @Mapping(target = "id", source = "id")
@@ -23,4 +25,6 @@ public interface BudgetMapper {
     @Mapping(target = "spent", source = "spent")
     @Mapping(target = "available", expression = "java(budgetCategory.available())")
     BudgetCategoryDto toDto(BudgetCategory budgetCategory);
+
+    Iterable<BudgetCategoryDto> toDto(Iterable<BudgetCategory> budgetCategories);
 }
