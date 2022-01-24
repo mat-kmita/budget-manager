@@ -10,6 +10,8 @@ import {selectAllAccounts, fetchAccounts, addNewAccount} from './features/accoun
 
 import AccountView from "./features/accounts/AccountView"
 import NewAccountForm from "./features/accounts/NewAccountForm"
+import BudgetsView from "./features/budgets/BudgetsView"
+import ReportsView from "./features/reports/Reports"
 
 const {Header, Content, Sider} = Layout;
 const {SubMenu} = Menu;
@@ -73,7 +75,10 @@ const App = () => {
                     <div className="logo"/>
                     <Menu theme="dark" defaultSelectedKeys={['budget']} mode="inline">
                         <Menu.Item key="budget">
-                            Budget
+                            <Link to="/">Budget</Link>
+                        </Menu.Item>
+                        <Menu.Item key="reports">
+                            <Link to="/reports" id="reports-link">Reports</Link>
                         </Menu.Item>
                         {accounts.map(account => (
                             <SubMenu key={`submenu-${account.id}`} title={account.name}>
@@ -82,16 +87,13 @@ const App = () => {
                                           id={`transactions-link-${account.id}`}>Transactions</Link>
                                 </Menu.Item>
                                 <Menu.Item key={`tranfers-${account.id}`}>
-                                    <Link to={`/account/${account.id}/transaction`}
+                                    <Link to={`/account/${account.id}/transfer`}
                                           id={`transfers-link-${account.id}`}>Transfers</Link>
                                 </Menu.Item>
                             </SubMenu>
                         ))}
                         <Menu.Item key="new-account" onClick={handleNewAccountFormShow}>
                             <PlusOutlined /> Create new account
-                        </Menu.Item>
-                        <Menu.Item key="stats">
-                            Stats
                         </Menu.Item>
                     </Menu>
                 </Sider>
@@ -100,7 +102,9 @@ const App = () => {
                     <Content style={{margin: '-1 16px'}}>
                         <div className="site-layout-background" style={{padding: 23, minHeight: 360}}>
                             <Routes>
-                                <Route path="/account/:id/transaction" element={<AccountView/>}/>
+                                <Route exact path="/" element={<BudgetsView />}/>
+                                <Route path="/account/:id/*" element={<AccountView/>}/>
+                                <Route path="/reports" element={<ReportsView/>}/>
                             </Routes>
                         </div>
                     </Content>

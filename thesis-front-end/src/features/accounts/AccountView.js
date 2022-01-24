@@ -1,10 +1,12 @@
 import {useEffect, useState} from "react"
 import React from "react-dom";
 import {useParams} from "react-router-dom"
+import {Routes, Route} from "react-router-dom"
 import {PageHeader, Skeleton, Button, Row, Statistic, Popconfirm, message} from "antd"
 import {useSelector, useDispatch} from "react-redux"
 import {deleteAccount, editAccount} from './accountsSlice'
 import TransactionsView from "../transactions/Transactions"
+import TransfersView from "../transfers/Transfers"
 import AccountEditForm from "../accounts/AccountEditForm"
 import {useNavigate} from 'react-router-dom'
 
@@ -94,7 +96,10 @@ const AccountView = () => {
                         />
                     </Row>
                 </PageHeader>
-                <TransactionsView/>
+                <Routes>
+                    <Route path="transaction" element={<TransactionsView/>}/>
+                    <Route path="transfer" element={<TransfersView/>}/>
+                </Routes>
             </Skeleton>
         </>
     );

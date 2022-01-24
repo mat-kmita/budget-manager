@@ -29,16 +29,12 @@ const TransactionsView = () => {
 
 const defaultPagination = {
     current: 1,
-    pageSize: 3,
     showSizeChanger: true,
-    showQuickJumper: true,
-    pageSizeOptions: [3, 5, 10, 15]
+    showQuickJumper: true
 }
 
 const TransactionsTable = (() => {
     const getFetchArgsFromPagination = pagination => {
-        console.log('Called getFetchArgs from pagination: ')
-        console.dir(pagination)
         return {
             pagination: {
                 length: pagination.pageSize,
@@ -49,18 +45,14 @@ const TransactionsTable = (() => {
 
     const dispatch = useDispatch()
 
-
     const {id} = useParams()
 
     useEffect(() => {
-        console.log('ID CHANGED: ', id)
         const {current, ...rest} = pagination
         const newPagination = {
             current: 1,
             ...rest
         }
-        console.log('pagination new: ')
-        console.dir(newPagination)
         if (transactionStatus !== 'idle' && transactionStatus !== 'loading') {
             dispatch(fetchTransactions({
                 id,
@@ -68,9 +60,6 @@ const TransactionsTable = (() => {
             }))
             setPagination(newPagination)
         }
-
-        console.log('changed id in transactions table')
-        console.dir(pagination)
     }, [id])
 
 

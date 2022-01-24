@@ -4,28 +4,33 @@ import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.BudgetServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
+import com.mateuszkmita.thesis.external.repository.AccountRepositoryInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
-import com.mateuszkmita.thesis.model.Account;
-import com.mateuszkmita.thesis.model.Budget;
-import com.mateuszkmita.thesis.model.BudgetCategory;
-import com.mateuszkmita.thesis.model.Transaction;
+import com.mateuszkmita.thesis.external.repository.dto.ExpensesAmountSumWithCategory;
+import com.mateuszkmita.thesis.external.repository.dto.TransactionAmountSumByDateDto;
+import com.mateuszkmita.thesis.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionInteractor implements TransactionServiceInterface {
 
     private final TransactionsRepositoryInterface transactionsRepository;
-    private final AccountServiceInterface accountService;
+    private final AccountRepositoryInterface accountRepository;
     private final BudgetServiceInterface budgetService;
     private final BudgetCategoryServiceInterface budgetCategoryService;
 
@@ -105,7 +110,7 @@ public class TransactionInteractor implements TransactionServiceInterface {
     public void deleteTransaction(Transaction transaction) {
         Account account = transaction.getAccount();
         account.setBalance(account.getBalance() - transaction.getAmount());
-        accountService.updateAccountEntity(account);
+        accountRepository.save(account);
 
         BudgetCategory budgetCategory = budgetCategoryService
                 .findBudgetCategoryByCategoryAndDate(transaction.getCategory(), transaction.getDate())
@@ -119,6 +124,24 @@ public class TransactionInteractor implements TransactionServiceInterface {
     public void deleteTransactionsByAccountId(int accountId) {
         List<Transaction> transactions = transactionsRepository.findAllByAccount_Id(accountId);
         transactions.forEach(this::deleteTransaction);
+    }
+
+    @Override
+    public List<TransactionAmountSumByDateDto> findOutcomesAmountDailyByDate(LocalDate startDate, LocalDate endDate) {
+        return transactionsRepository.findOutcomesAmountSumDailyByDate(startDate, endDate);
+    }
+
+    @Override
+    public List<TransactionAmountSumByDateDto> findIncomesAmountDailyByDate(LocalDate startDate, LocalDate endDate) {
+        return transactionsRepository.findIncomesAmountSumDailyByDate(startDate, endDate);
+    }
+
+    @Override
+    @Transactional
+    public Map<Category, Long> findExpensesCategorizedSumByDate(LocalDate startDate, LocalDate endDate) {
+        return transactionsRepository
+                .findExpensesCategorizedAmountSumByDate(startDate, endDate)
+                .collect(Collectors.toMap(ExpensesAmountSumWithCategory::category, ExpensesAmountSumWithCategory::sum));
     }
 
     @Override
