@@ -27,7 +27,6 @@ public class TransactionsController {
     private final TransactionServiceInterface transactionService;
     private final TransactionMapper transactionMapper;
     private final CategoryServiceInterface categoryService;
-    private final AccountServiceInterface accountService;
 
     @PutMapping("/{transactionId}/")
     public ResponseEntity<TransactionDto> updateTransaction(@PathVariable(name = "transactionId") int transactionId,

@@ -9,14 +9,14 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface BudgetCategoryServiceInterface {
-    Optional<BudgetCategory> findBudgetCategory(int id);
     Optional<BudgetCategory> findBudgetCategoryByCategoryAndDate(Category category, LocalDate date);
+
     BudgetCategory updateBudgetCategoryAmountById(int budgetId, int categoryId, int amount)
             throws ResourceNotFoundException;
 
     BudgetCategory addTransaction(BudgetCategory budgetCategory, Transaction transaction);
+
     BudgetCategory removeTransaction(BudgetCategory budgetCategory, Transaction transaction);
 
-    BudgetCategory saveBudgetCategory(BudgetCategory budgetCategory);
-
+    Iterable<BudgetCategory> createAllForCategory(Category category);
 }

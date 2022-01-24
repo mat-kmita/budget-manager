@@ -24,6 +24,9 @@ const categorySlice = createSlice({
                 state.status = 'succeeded'
                 state.categories = action.payload
             })
+            .addCase(createCategory.fulfilled, (state, action) => {
+                state.categories.push(action.payload)
+            })
     }
 })
 
@@ -33,6 +36,11 @@ export default categorySlice.reducer
 
 export const fetchCategories = createAsyncThunk('categories/fetchCategories', async () => {
     const response = await axios('http://localhost:8080/api/v1/category/')
+    return response.data
+})
+
+export const createCategory = createAsyncThunk('categories/createCategory', async (data) => {
+    const response = await axios.post('http://localhost:8080/api/v1/category/', data)
     return response.data
 })
 
