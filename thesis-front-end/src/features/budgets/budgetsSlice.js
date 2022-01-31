@@ -3,8 +3,10 @@ import axios from "axios";
 
 const initialState = {
     budgets: [],
-    budgetsCategories: {},
+    budgetCategories: [],
     status: 'idle',
+    budgetCategoriesStatus: 'idle',
+    activeBudgetId: null,
     error: {}
 }
 
@@ -12,9 +14,26 @@ const budgetsSlice = createSlice({
     name: 'budgets',
     initialState,
     reducers: {
-        addBudgetCategory: (state, action) => {
-            state.budgets = state.budgets.map(budget => {})
-            state.budgetsCategories.push(action.payload)
+        updatedBudgetCategoryName: (state, action) => {
+            state.budgetCategories = state.budgetCategories.map(bc => {
+                if (bc.category.id === action.payload.categoryId) {
+                    return {
+                        ...bc,
+                        category: {
+                            ...bc.category,
+                            name: action.payload.categoryName
+                        }
+                    }
+                } else {
+                    return bc
+                }
+            })
+        },
+        setActiveBudgetId: (state, action) => {
+            state.activeBudgetId = action.payload.budgetId
+        },
+        deleteBudgetCategory: (state, action) => {
+            state.budgetCategories = state.budgetCategories.filter(bc => bc.category.id !== action.payload.categoryId)
         }
     },
     extraReducers(builder) {
@@ -23,6 +42,7 @@ const budgetsSlice = createSlice({
                 state.status = 'loading'
             })
             .addCase(fetchBudgets.fulfilled, (state, action) => {
+                state.status = 'succeeded'
                 state.budgets = action.payload
             })
             .addCase(fetchBudgets.rejected, (state, action) => {
@@ -33,11 +53,17 @@ const budgetsSlice = createSlice({
                 console.dir(action)
                 state.budgets.push(action.payload)
             })
-            .addCase(fetchBudgetsCategories.fulfilled, (state, action) => {
-                state.budgetsCategories[action.payload.budgetId] = action.payload.categories.filter(x => x.category.id !== 1).sort((x1, x2) => x1.id > x2.id)
+            .addCase(fetchBudgetCategories.pending, (state, action) => {
+                state.budgetCategoriesStatus = 'loading'
+            })
+            .addCase(fetchBudgetCategories.fulfilled, (state, action) => {
+                state.budgetCategoriesStatus = 'succeeded'
+                state.budgetCategories = action.payload.categories.filter(x => x.category.id !== 1).sort((x1, x2) => x1.id > x2.id)
             })
     }
 })
+
+export const {updatedBudgetCategoryName,setActiveBudgetId, deleteBudgetCategory} = budgetsSlice.actions
 
 export default budgetsSlice.reducer
 
@@ -50,7 +76,7 @@ export const fetchBudgets = createAsyncThunk('budgets/fetchBudgets', async () =>
     }
 })
 
-export const fetchBudgetsCategories = createAsyncThunk("budgets/fetchCategories", async (data) => {
+export const fetchBudgetCategories = createAsyncThunk("budgets/fetchCategories", async (data) => {
     const response = await axios(`http://localhost:8080/api/v1/budget/${data.budgetId}/category/`)
     return {
         categories: response.data,
@@ -61,4 +87,14 @@ export const fetchBudgetsCategories = createAsyncThunk("budgets/fetchCategories"
 export const createBudget = createAsyncThunk("budgets/createBudget", async (data) => {
     const reponse = await axios.post('http://localhost:8080/api/v1/budget/', data)
     return reponse.data
+})
+
+export const budgetMoney = createAsyncThunk("budgets/budgetMoney", async (data) => {
+    const response = await axios.put(`http://localhost:8080/api/v1/budgetCategory/budget/${data.budgetId}/category/${data.categoryId}/`, {
+        budgetedAmount: data.amount
+    })
+    return {
+        ...response.data,
+        budgetId: data.budgetId
+    }
 })

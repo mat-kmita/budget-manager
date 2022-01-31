@@ -12,6 +12,7 @@ import AccountView from "./features/accounts/AccountView"
 import NewAccountForm from "./features/accounts/NewAccountForm"
 import BudgetsView from "./features/budgets/BudgetsView"
 import ReportsView from "./features/reports/Reports"
+import NotFoundView from "./features/utils/NotFound"
 
 const {Header, Content, Sider} = Layout;
 const {SubMenu} = Menu;
@@ -39,14 +40,13 @@ const App = () => {
         }
     }, [dispatch, accountsStatus, allAccounts, accountsError])
 
+    // Adding accounts
     const handleNewAccountFormShow = () => {
         setNewAccountFormVisible(true)
     }
-
     const handleNewAccountFormCancel = () => {
         setNewAccountFormVisible(false);
     }
-
     const handleNewAccount = async (values) => {
         try {
             const data = await dispatch(addNewAccount(values)).unwrap()
@@ -103,8 +103,9 @@ const App = () => {
                         <div className="site-layout-background" style={{padding: 23, minHeight: 360}}>
                             <Routes>
                                 <Route exact path="/" element={<BudgetsView />}/>
-                                <Route path="/account/:id/*" element={<AccountView/>}/>
-                                <Route path="/reports" element={<ReportsView/>}/>
+                                <Route exact path="/account/:id/*" element={<AccountView/>}/>
+                                <Route exact path="/reports" element={<ReportsView/>}/>
+                                <Route path="*" element={<NotFoundView/>}/>
                             </Routes>
                         </div>
                     </Content>

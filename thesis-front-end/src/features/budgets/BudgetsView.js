@@ -1,8 +1,7 @@
 import {useState, useEffect} from "react"
 import {useDispatch, useSelector} from "react-redux"
-// import {message} from "antd"
-import {fetchBudgets, createBudget, fetchBudgetsCategories} from "./budgetsSlice"
-import {selectAllCategories, fetchCategories, createCategory} from "../categories/categoriesSlice"
+import {fetchBudgets, createBudget, fetchBudgetCategories, updatedBudgetCategoryName, deleteBudgetCategory, setActiveBudgetId, budgetMoney} from "./budgetsSlice"
+import {selectAllCategories, fetchCategories, createCategory, editCategory, deleteCategory} from "../categories/categoriesSlice"
 import {PageHeader, Button, Popconfirm, Statistic, Row, Table, Tooltip, Skeleton, message} from 'antd';
 import {DeleteTwoTone, EditTwoTone, DollarTwoTone} from "@ant-design/icons"
 import moment from "moment"
@@ -22,42 +21,49 @@ const BudgetsView = () => {
         const currentDate = new Date()
         return b.year == currentDate.getFullYear() && b.month == currentDate.getMonth() + 1
     }))
-    const currentBudgetCategories = useSelector(state => state.budgets.budgetsCategories[budgetId])
+    const currentBudgetCategories = useSelector(state => state.budgets.budgetCategories)
+    const budgetsStatus = useSelector(state => state.budgets.status)
+    const budgetCategoriesStatus = useSelector(state => state.budgets.budgetCategoriesStatus)
 
     useEffect(() => {
-        console.log(`changed budgetId to ${budgetId}`)
-
-        if (budgetId === null) {
-            console.log('dispatching action to fetch budgets')
-            if (allBudgets.length === 0) {
-                dispatch(fetchBudgets())
-            }
-        } else {
-            if (currentBudgetCategories === undefined) {
-                dispatch(fetchBudgetsCategories({
-                    budgetId: budgetId
-                }))
-            }
+        if (budgetId !== null) {
+            dispatch(fetchBudgetCategories({
+                budgetId: budgetId
+            }))
+            dispatch(setActiveBudgetId({
+                budgetId: budgetId
+            }))
         }
     }, [budgetId])
+    
+    
+    useEffect(() => {
+        if(budgetsStatus === 'idle') {
+            dispatch(fetchBudgets())
+        }
+        
+        if(budgetsStatus === 'succeeded' && budgetId === null) {
+            if(currentMonthBudget === undefined) {
+                    dispatch(createBudget({
+                        month: new Date().getMonth() + 1,
+                        year: new Date().getFullYear()
+                    }))
+            }
+        }
+    }, [budgetsStatus])
 
     useEffect(() => {
-        console.log(`currentMonthBudget hook. it is now ${currentMonthBudget}`)
-        if (budgetId == null && currentMonthBudget !== undefined) {
+        if (budgetId === null && currentMonthBudget !== undefined) {
             setBudgetId(currentMonthBudget.id)
         }
     }, [currentMonthBudget])
 
-    useEffect(() => {
-        console.log(`currentBudget is now ${currentBudget}`)
-    }, [currentBudget])
-
+    // Adding categories
     const [newCategoryFormVisible, setNewCategoryFormVisible] = useState(false);
     const handleCategoryCreate = async (values) => {
-        console.log('handling new acategory')
         try {
             await dispatch(createCategory(values)).unwrap()
-            dispatch(fetchBudgetsCategories({budgetId: budgetId}))
+            dispatch(fetchBudgetCategories({budgetId: budgetId}))
             message.success({
                 content: "Category has been created",
                 dismiss: 5
@@ -72,23 +78,68 @@ const BudgetsView = () => {
         }
     }
 
+    // Editing existing categories
     const [editedCategory, setEditedCategory] = useState(null)
     const [editCategoryFormVisible, setEditCategoryFormVisible] = useState(false)
-    const handleEditCategory = async (category) => {
+    const showEditCategoryDialog = async (category) => {
         setEditedCategory(category)
         setEditCategoryFormVisible(true)
     }
+    const handleCategoryEdit = async (values) => {
+        try {
+            await dispatch(editCategory({
+                categoryId: editedCategory.id,
+                payload: values
+            })).unwrap()
+            dispatch(updatedBudgetCategoryName({
+                categoryId: editedCategory.id,
+                categoryName: values.name
+            }))
+        } catch (e) {
+            message.error(`There was an error while editing the category: ${e.message}`, 10)
+        } finally {
+            setEditCategoryFormVisible(false)
+        }
+    }
 
+    // Deleting categories
+    const categoryDeleteStatus = useSelector(state => state.categories.deleteStatus)
+    const handleCategoryDelete = async (budgetCategory) => {
+        try {
+            await dispatch(deleteCategory({
+                categoryId: budgetCategory.category.id
+            })).unwrap()
+            dispatch(deleteBudgetCategory({
+                categoryId: budgetCategory.category.id
+            }))
+        } catch (e) {
+            message.error(`There was an error while deleting the ${budgetCategory.category.name} category: ${e.message}`, 10)
+        }
+    }
+
+    // Budgeting money
     const [isBudgetingFormVisible, setIsBudgetingFormVisible] = useState(false)
     const [budgetingFormData, setBudgetingFormData] = useState(null)
-
-    const handleBudgeting = (record) => {
-        console.log('in handle budgeting')
-        console.dir(record)
-        setBudgetingFormData({
-            amount: record.amount
-        })
+    const showBudgetingDialog = (record) => {
+        setBudgetingFormData(record)
         setIsBudgetingFormVisible(true)
+    }
+    const handleBudgeting = async (values) => {
+        try {
+            await dispatch(budgetMoney({
+                budgetId: budgetId,
+                categoryId: budgetingFormData.category.id,
+                amount: values.amount * 100
+            })).unwrap()
+            await dispatch(fetchBudgets())
+            await dispatch(fetchBudgetCategories({
+                budgetId: budgetId
+            }))
+        } catch (e) {
+            message.error(`There was an error while budgeting money for ${budgetingFormData.category.name} category: ${e.message}`, 10)
+        } finally {
+            setIsBudgetingFormVisible(false)
+        }
     }
 
     return (
@@ -101,6 +152,7 @@ const BudgetsView = () => {
             <EditCategoryForm
                 visible={editCategoryFormVisible}
                 onCancel={() => setEditCategoryFormVisible(false)}
+                onCreate={handleCategoryEdit}
                 category={editedCategory}
             />
             <Skeleton active={true} loading={currentBudget === undefined}>
@@ -127,8 +179,7 @@ const BudgetsView = () => {
             <Table
                 dataSource={currentBudgetCategories}
                 rowKey={record => record.id}
-                // loading={select === 'loading'}
-                // onChange={handleTableChange}
+                loading={budgetCategoriesStatus !== 'succeeded'}
                 pagination={false}
                 size="small">
                 <Column
@@ -136,7 +187,7 @@ const BudgetsView = () => {
                     key="edit-category"
                     width="5%"
                     render={(text, record) => {
-                        return <EditTwoTone onClick={() => handleEditCategory(record.category)}/>
+                        return <EditTwoTone onClick={() => showEditCategoryDialog(record.category)}/>
                     }}/>
                 <Column
                     title="Delete category"
@@ -145,7 +196,8 @@ const BudgetsView = () => {
                     render={(text, record) => {
                         return <Popconfirm
                             title="Are you sure to delete this category?"
-                            // onConfirm={() => handleTransactionDelete(record.id)}
+                            okButtonProps = {{ loading: categoryDeleteStatus === 'loading' }}
+                            onConfirm={() => handleCategoryDelete(record)}
                             okText="Yes"
                             cancelText="Cancel">
                             <DeleteTwoTone danger/>
@@ -178,15 +230,12 @@ const BudgetsView = () => {
                     key="budget"
                     render={(text, record) => {
                         return <Tooltip title="Allocate money in this category">
-                            <DollarTwoTone onClick={() => handleBudgeting(record)}/>
+                            <DollarTwoTone onClick={() => showBudgetingDialog(record)}/>
                         </Tooltip>
                     }}/>
             </Table>
             <BudgetingForm visible={isBudgetingFormVisible}
-                           onCreate={() => {
-                               console.log('create');
-                               setIsBudgetingFormVisible(false)
-                           }}
+                           onCreate={(values) => handleBudgeting(values)}
                            onCancel={() => setIsBudgetingFormVisible(false)}
                            data={budgetingFormData}/>
         </div>

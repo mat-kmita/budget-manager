@@ -4,11 +4,13 @@ import {useParams} from "react-router-dom"
 import {Routes, Route} from "react-router-dom"
 import {PageHeader, Skeleton, Button, Row, Statistic, Popconfirm, message} from "antd"
 import {useSelector, useDispatch} from "react-redux"
-import {deleteAccount, editAccount} from './accountsSlice'
+import {fetchAccounts, deleteAccount, editAccount} from './accountsSlice'
+import {fetchBudgets, fetchBudgetCategories} from "../budgets/budgetsSlice"
 import TransactionsView from "../transactions/Transactions"
 import TransfersView from "../transfers/Transfers"
 import AccountEditForm from "../accounts/AccountEditForm"
 import {useNavigate} from 'react-router-dom'
+import NotFound from "../utils/NotFound"
 
 const AccountView = () => {
     const dispatch = useDispatch();
@@ -28,20 +30,23 @@ const AccountView = () => {
         }
     }, [id, accountsStatus, findAccountById])
 
+    // Deleting accounts
+    const activeBudgetId = useSelector(state => state.budgets.activeBudgetId)
     const handleAccountDelete = async (accountId) => {
         try {
             await dispatch(deleteAccount(accountId)).unwrap()
-            navigate('/')
+            await dispatch(fetchAccounts()).unwrap()
         } catch (err) {
             message.error({
-                content: `An error occured while deleting transaction: ${err.message}`,
+                content: `An error occured while deleting account: ${err.message}`,
                 dismiss: 5
             })
         } finally {
-
+            navigate('/')
         }
     }
 
+    // Editing accounts
     const [isEditFormVisible, setEditFormVisible] = useState(false)
     const handleAccountEdit = async (values) => {
         try {
@@ -65,43 +70,49 @@ const AccountView = () => {
 
     return (
         <>
-            <AccountEditForm
-                visible={isEditFormVisible}
-                handleCancel={() => setEditFormVisible(false)}
-                handleCreate={handleAccountEdit}
-                account={account}/>
-            <Skeleton loading={accountsStatus !== 'succeeded'}>
-                <PageHeader
-                    title={account?.name}
-                    subTitle={account?.description}
-                    extra={[
-                        <Button primary onClick={() => setEditFormVisible(true)}>Edit account</Button>,
-                        <Popconfirm
-                            title="Are you sure to delete this account? All transactions on this account will be lost"
-                            onConfirm={() => handleAccountDelete(account.id)}
-                            okText="Yes"
-                            cancelText="Cancel">
-                            <Button danger>Delete account</Button>
-                        </Popconfirm>
-                    ]}>
-                    <Row>
-                        <Statistic title="Account type" value={account?.accountType}/>
-                        <Statistic
-                            title="Balance"
-                            value={account?.balance / 100}
-                            prefix="$"
-                            style={{
-                                margin: '0 32px',
-                            }}
-                        />
-                    </Row>
-                </PageHeader>
-                <Routes>
-                    <Route path="transaction" element={<TransactionsView/>}/>
-                    <Route path="transfer" element={<TransfersView/>}/>
-                </Routes>
-            </Skeleton>
+            {accountsStatus === 'succeeded' && account === undefined && <NotFound/>}
+            {accountsStatus === 'succeeded' && account !== undefined && (
+                <>
+                    <AccountEditForm
+                        visible={isEditFormVisible}
+                        handleCancel={() => setEditFormVisible(false)}
+                        handleCreate={handleAccountEdit}
+                        account={account}/>
+                    <Skeleton loading={accountsStatus === 'loading'}>
+                        <PageHeader
+                            title={account?.name}
+                            subTitle={account?.description}
+                            extra={[
+                                <Button primary onClick={() => setEditFormVisible(true)}>Edit account</Button>,
+                                <Popconfirm
+                                    title="Are you sure to delete this account? All transactions on this account will be lost"
+                                    onConfirm={() => handleAccountDelete(account.id)}
+                                    okText="Yes"
+                                    cancelText="Cancel">
+                                    <Button danger>Delete account</Button>
+                                </Popconfirm>
+                            ]}>
+                            <Row>
+                                <Statistic title="Account type" value={account?.accountType}/>
+                                <Statistic
+                                    title="Balance"
+                                    value={account?.balance / 100}
+                                    prefix="$"
+                                    style={{
+                                        margin: '0 32px',
+                                    }}
+                                />
+                            </Row>
+                        </PageHeader>
+                        <Routes>
+                            <Route path="transaction" element={<TransactionsView/>}/>
+                            <Route path="transfer" element={<TransfersView/>}/>
+                        </Routes>
+                    </Skeleton>
+                </>
+            )}
         </>
+
     );
 }
 

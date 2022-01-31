@@ -6,7 +6,7 @@ import "antd/dist/antd.css";
 
 const {Option} = Select;
 
-const MakeTransferForm = ({visible, onCreate, onCancel}) => {
+const MakeTransferForm = ({visible, onCreate, onCancel, maxAmount}) => {
 
     const accounts = useSelector(state => state.accounts.accounts)
     const {id} = useParams()
@@ -61,10 +61,10 @@ const MakeTransferForm = ({visible, onCreate, onCancel}) => {
                         }
                     ]}>
 
-                    <InputNumber precision={2} min={0.01}/>
+                    <InputNumber precision={2} min={0.01} />
                 </Form.Item>
                 <Form.Item
-                    name="toAccount"
+                    name="toAccountId"
                     label="Destination account"
                     rules={[
                         {
@@ -76,7 +76,7 @@ const MakeTransferForm = ({visible, onCreate, onCancel}) => {
                     <Select>
                         {
                             accounts
-                                .filter(account => account.id != id)
+                                .filter(account => account.id !== parseInt(id))
                                 .map(account => <Option value={account.id}>{account.name}</Option>)
                         }
                     </Select>
@@ -86,47 +86,4 @@ const MakeTransferForm = ({visible, onCreate, onCancel}) => {
     );
 };
 
-const AddTransactionComponent = () => {
-    const dispatch = useDispatch()
-    
-    const {id} = useParams();
-    
-    const [visible, setVisible] = useState(false);
-
-    const success = () => {
-        message.success(`Succesfully created transfer`)
-    }
-    const error = (err) => {
-        message.error(`An error occured whil creating transfer: ${err}`)
-    }
-    
-    const onCreate = async (values) => {
-        try {
-            success()
-        } catch (err) {
-            error(err.message)
-        } finally {
-            setVisible(false)
-        }
-    };
-
-    return (
-        <div>
-            <Button
-                type="primary"
-                onClick={() => {
-                    setVisible(true);
-                }}>
-                Make a transfer  
-            </Button>
-            <MakeTransferForm
-                visible={visible}
-                onCreate={onCreate}
-                onCancel={() => {
-                    setVisible(false);
-                }}/>
-        </div>
-    );
-};
-
-export default AddTransactionComponent;
+export default MakeTransferForm;

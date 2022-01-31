@@ -40,7 +40,6 @@ const transactionsSlice = createSlice({
 export default transactionsSlice.reducer
 
 export const fetchHeatMaps = createAsyncThunk('reports/fetchHeatMaps', async data => {
-    console.log('fetching heatmaps')
     const outcomesResponse = await axios(`http://localhost:8080/api/v1/report/heatmap/outcomes/?${qs.stringify(data)}`)
     const incomesResponse = await axios(`http://localhost:8080/api/v1/report/heatmap/incomes/?${qs.stringify(data)}`)
     return {

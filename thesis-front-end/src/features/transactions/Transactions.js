@@ -11,6 +11,7 @@ import {
     deleteTransaction,
     editTransaction
 } from './transactionsSlice'
+import {fetchBudgets, fetchBudgetCategories} from "../budgets/budgetsSlice"
 import {fetchAccounts} from "../accounts/accountsSlice"
 
 import AddTransactionComponent from './AddTransactionComponent'
@@ -71,10 +72,16 @@ const TransactionsTable = (() => {
     const transactionStatus = useSelector(state => state.transactions.status)
 
     const loading = () => transactionStatus === 'loading'
+    
+    const activeBudgetId = useSelector(state => state.budgets.activeBudgetId)
+    const reloadBudgets = () => {
+        dispatch(fetchBudgets())
+        // dispatch(fetchBudgetCategories({
+        //     budgetId: activeBudgetId
+        // }))
+    }
 
     const handleTransactionDelete = async (transactionId) => {
-        console.log('in delete handler')
-        console.dir(pagination)
         try {
             await dispatch(deleteTransaction(transactionId)).unwrap();
             if (transactions.length === 0) {
@@ -89,6 +96,7 @@ const TransactionsTable = (() => {
                 }))).unwrap()
             }
             await dispatch(fetchAccounts()).unwrap()
+            await reloadBudgets()
         } catch (err) {
             message.error(`Couldn't delete this transaction. Reason: ${err.message}`)
         }
@@ -96,8 +104,6 @@ const TransactionsTable = (() => {
 
     const handleTableChange = (newPagination, sorter) => {
         setPagination(newPagination)
-        console.log('in table change')
-        console.dir(newPagination)
         dispatch(fetchTransactions({
             id,
             ...getFetchArgsFromPagination(newPagination)
@@ -132,6 +138,7 @@ const TransactionsTable = (() => {
             // myThunk(values)
             await dispatch(editTransaction(values)).unwrap()
             await dispatch(fetchAccounts()).unwrap()
+            await reloadBudgets()
             message.success({
                 content: "Transaction has been edited",
                 dismiss: 5
@@ -156,7 +163,6 @@ const TransactionsTable = (() => {
             <Table
                 dataSource={transactions}
                 rowKey={record => record.id}
-                // columns={columns}
                 pagination={{...pagination, total: total}}
                 loading={loading}
                 onChange={handleTableChange}

@@ -60,7 +60,6 @@ export const fetchTransactions = createAsyncThunk('transcations/fetchTransaction
 })
 
 export const editTransaction = createAsyncThunk('transactions/editTransaction', async data => {
-    console.log('IN EDIT TRANSACTION THUNK')
     const {id, ...payload} = data
     const date = new Date(payload.date)
     const dayPart = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`

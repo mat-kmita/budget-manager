@@ -9,7 +9,6 @@ const BudgetingForm = ({visible, onCreate, onCancel, data}) => {
     const [form] = Form.useForm();
     
     useEffect(() => {
-        console.dir(data)
         form.setFieldsValue({
             amount: data?.amount / 100
         })

@@ -3,6 +3,7 @@ import {useDispatch} from "react-redux"
 import {useParams} from "react-router-dom"
 import {Button, Modal, Form, Input, InputNumber, DatePicker, message} from "antd";
 import "antd/dist/antd.css";
+import {fetchBudgets, fetchBudgetCategories} from "../budgets/budgetsSlice"
 
 import {addNewTransaction} from "./transactionsSlice"
 import {fetchAccounts} from "../accounts/accountsSlice"
@@ -105,6 +106,7 @@ const AddTransactionComponent = () => {
         try {
             await dispatch(addNewTransaction({payload: values, accountId: id})).unwrap()
             await dispatch(fetchAccounts()).unwrap()
+            await dispatch(fetchBudgets()).unwrap()
             success(1)
         } catch (err) {
             error(err.message)

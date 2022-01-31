@@ -20,10 +20,6 @@ export default function CategoriesSelect({ value = {}, onChange }) {
     }, [categoryStatus, dispatch])
 
     const triggerChange = (changedValue) => {
-        console.log('changed value: ')
-        console.dir(changedValue)
-        console.log('value: ')
-        console.dir(value)
         onChange?.({
             categoryId,
             ...value,

@@ -27,11 +27,7 @@ const EditCategoryForm = ({visible, onCreate, onCancel, category}) => {
                     .validateFields()
                     .then((values) => {
                         form.resetFields();
-                        values.date = values.date.toString()
-                        onCreate({
-                            ...values,
-                            id: category.id
-                        });
+                        onCreate(values);
                     })
                     .catch((info) => {
                         console.log('Validate Failed:', info);
