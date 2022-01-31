@@ -2,7 +2,7 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="create transactions tables" author="Mateusz Kmita">
         <createTable tableName="transactions">
@@ -18,7 +18,8 @@
                 <constraints nullable="false"/>
             </column>
             <column name="account_id" type="integer">
-                <constraints nullable="false" foreignKeyName="fk_account" references="accounts(id)" deleteCascade="true"/>
+                <constraints nullable="false" foreignKeyName="fk_account" references="accounts(id)"
+                             deleteCascade="true"/>
             </column>
             <column name="payee" type="varchar">
                 <constraints nullable="false"/>

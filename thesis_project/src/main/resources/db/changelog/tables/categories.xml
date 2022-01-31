@@ -2,11 +2,11 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+       xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="create categories" author="Mateusz Kmita">
         <createTable  tableName="categories">
-            <column name="id" type="integer">
+            <column name="id" type="integer" generationType="BY DEFAULT">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar">
@@ -14,14 +14,13 @@
             </column>
         </createTable>
 
-        <addAutoIncrement tableName="categories" columnName="id" generationType="BY DEFAULT"/>
+        <addAutoIncrement tableName="categories" columnName="id"/>
 
         <addColumn tableName="transactions">
             <column name="category_id" type="integer">
                 <constraints foreignKeyName="fk_category_id" nullable="false" references="categories(id)"/>
             </column>
         </addColumn>
-        
         <loadData tableName="categories" file="db/changelog/data/categories-default.csv">
             <column header="name" name="name" type="STRING"/>
         </loadData>
