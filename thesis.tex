@@ -7,7 +7,7 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage[nottoc]{tocbibind}
-\usepackage{url}
+\usepackage[obeyspaces]{url}
 \usepackage{listings}
 \usepackage[T1]{fontenc}
 \usepackage{inconsolata}
@@ -71,15 +71,37 @@
 %\renewcommand \qedsymbol {\ensuremath{\square}}
 % ...
 %%%%%
+\lstset{
+literate=%
+{ą}{{\k{a}}}1
+{Ą}{{\k{A}}}1
+{ć}{{\'c}}1
+{Ć}{{\'{C}}}1
+{ę}{{\k{e}}}1
+{Ę}{{\k{E}}}1
+{ł}{{\l{}}}1
+{Ł}{{\L{}}}1
+{ń}{{\'n}}1
+{Ń}{{\'N}}1
+{ó}{{\'o}}1
+{Ó}{{\'O}}1
+{ś}{{\'s}}1
+{Ś}{{\'S}}1
+{ż}{{\.z}}1
+{Ż}{{\.Z}}1
+{ź}{{\'z}}1
+{Ź}{{\'Z}}1
+}
 
-
-	\begin{document}
+\begin{document}
 
 %%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
 
 \chapter{Wprowadzenie}
 \section{Analiza zagadnienia i motywacje autora}
-W ramach tej pracy zajmuję się zagadnieniem prowadzenia budżetu domowego. Istnieją różne podejścia do tego problemu \citep{budgeting-methods} w zależności do indywidualnych potrzeb.Wyróżnia się kilka kroków, które należy zawsze wykonać podczas tworzenia budżetu. Powinniśmy stworzyć kategorie wydatków, aby podobne wydatki rozpatrywać razem. Kategorie możemy pogrupować na te dotyczące wydatków regularnych oraz dotyczące wydatków nieregularnych. Środki, jakimi dysponujemy, powinniśmy podzielić według tych kategorii, starając się pokryć wszystkie nasze potrzeby.   Następnie potrzebne są dane dotyczące naszych wydatków. Należy więc przygotować podsumowanie kosztów jakie ponieśliśmy w danym czasie (zazwyczaj miesiącu) według kategorii, jakie wcześniej rozróżniliśmy. Na tym etapie mamy już wiedzę, w których obszarach jesteśmy na plusie, a w których wydaliśmy za dużo. Pozostało zdecydować co zrobić z pozostałymi środkami.
+W ramach tej pracy zajmuję się zagadnieniem prowadzenia budżetu domowego. Ze względu na obszerność tego zagadnienia oraz ograniczoną ilość czasu, zdecydowałem się na dostarczenie rozwiązania bardzo podobnego zagadnienia, jakim jest prowadzenie budżetu osobistego. Może ono zostać przeniesione także na problem prowadzenia budżetu domowego, czego przykłady podam w dalszej części tego rozdziału.
+
+Istnieją różne podejścia do tego problemu \citep{budgeting-methods} w zależności do indywidualnych potrzeb. Wyróżnia się kilka kroków, które należy zawsze wykonać podczas tworzenia budżetu. Powinniśmy stworzyć kategorie wydatków, aby podobne wydatki rozpatrywać razem. Kategorie możemy pogrupować na te dotyczące wydatków regularnych oraz dotyczące wydatków nieregularnych. Środki, jakimi dysponujemy, powinniśmy podzielić według tych kategorii, starając się pokryć wszystkie nasze potrzeby.   Następnie potrzebne są dane dotyczące naszych wydatków. Należy więc przygotować podsumowanie kosztów jakie ponieśliśmy w danym czasie (zazwyczaj miesiącu) według kategorii, jakie wcześniej rozróżniliśmy. Na tym etapie mamy już wiedzę, w których obszarach jesteśmy na plusie, a w których wydaliśmy za dużo. Pozostało zdecydować co zrobić z pozostałymi środkami.
 Niektóre z popularnych metod prowadzenia budżetów to \citep{budgeting-examples}:
 \begin{itemize}
 	\item \textbf{Metoda 50/30/20} - polega na podziale środków poprzez przypisanie 50\% przychodów na niezbędne wydatki (np. czynsz, zakupy spożywcze), 30\% na wydatki dodatkowe (np. wyjście do restauracji) oraz pozostałych 20\% na oszczędności i spłaty długów.
@@ -91,18 +113,20 @@ Model analityczny tego zagadnienia widoczny jest na diagramie (Rys. \ref{fig:dom
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.75]{domain-model.png}
-	\caption{Model przedstawiający zagadnienia budżetu domowego na diagramie UML}
+	\caption{Model przedstawiający zagadnienia budżetu osobistego na diagramie UML}
 	\label{fig:domain-model}
 \end{figure}
 
-Z jednej strony budżet domowy wymaga poświęcenia dodatkowego czasu na stworzenie oraz jego regularne prowadzanie. Z drugiej strony możemy w zamian liczyć na większą kontrolę nad stanem naszego portfela. Przy założeniu, że taki budżet prowadzony jest regularnie, mamy wiedzę o tym, ile pieniędzy możemy jeszcze wydać. Może to pozwolić nawet na uniknięcie długów. Osoba prowadząca budżet domowy i historię wydatków może także łatwiej analizować swoje nawyki konsumenckie oraz je poprawiać, aby móc efektywniej zarządzać swoimi pieniędzmi w przyszłości.
+Jak wcześniej wspomniałem, w pracy tej zająłem się opracowaniem rozwiązania dla zagadnienia prowadzenia budżetu osobistego. Można jednak użyć podanego wyżej modelu, aby poradzić sobie także z prowadzeniem budżetu domowego. Rozważmy sytuację, w której budżet domowy chce prowadzić mieszkająca razem rodzina. W takim przypadku dostępnymi środkami mogą być zarobki rodziców. Stworzą oni kategorie dla wszystkich wydatków wymaganych do prowadzenia domu rodzinnego, oszczędzania, czy też oddzielne na tzw. kieszonkowe dla dzieci. Jeśli budżet domowy chcieliby prowadzić np. mieszkający razem studenci, dostępnymi środkami byłyby składki każdego z nich na wspólny budżet. Mogliby oni stworzyć kategorie dla wydatków dotyczących prowadzenia wspólnego domu takie jak czynsz, artykuły gospodarstwa domowego, opłaty za telewizję, Internet itd.
+
+Z jednej strony budżet osobistego wymaga poświęcenia dodatkowego czasu na stworzenie oraz jego regularne prowadzanie. Z drugiej strony możemy w zamian liczyć na większą kontrolę nad stanem naszego portfela. Przy założeniu, że taki budżet prowadzony jest regularnie, mamy wiedzę o tym, ile pieniędzy możemy jeszcze wydać. Może to pozwolić nawet na uniknięcie długów. Osoba prowadząca budżet osobisty i historię wydatków może także łatwiej analizować swoje nawyki konsumenckie oraz je poprawiać, aby móc efektywniej zarządzać swoimi pieniędzmi w przyszłości.
 \bigbreak
-Zdecydowałem się na stworzenie aplikacji, która będzie dostarczała wszystkie wymagane podstawowe funkcjonalności do zrealizowania opisanego wyżej zadania oraz będzie na tyle prosta, aby nowy użytkownik mógł jak najmniejszym kosztem zacząć prowadzić swój budżet domowy. W dalszej części pracy opisałem jakie funkcje udostępnia aplikacja. Następnie skupiłem się na przedstawieniu i uzasadnieniu mojego rozwiązania pod względem technologicznym. W końcowej części pracy podsumowałem zrealizowane zadania oraz podałem przykłady sposobów na dalsze ulepszenie aplikacji.
+Zdecydowałem się na stworzenie aplikacji, która będzie dostarczała  podstawowe funkcjonalności do zrealizowania opisanego wyżej zadania oraz będzie na tyle prosta, aby nowy użytkownik mógł jak najmniejszym kosztem zacząć prowadzić swój budżet osobisty. W dalszej części pracy opisałem jakie funkcje udostępnia aplikacja. Następnie skupiłem się na przedstawieniu i uzasadnieniu mojego rozwiązania pod względem technologicznym. W końcowej części pracy podsumowałem zrealizowane zadania oraz podałem przykłady sposobów na dalsze ulepszenie aplikacji.
 
 \section{Przykłady innych rozwiązań}
-Użytkownicy zainteresowani tematyką prowadzenia budżetu domowego mają duży wybór dostępnych rozwiązań. Istnieją zarówno aplikacje dostępne przez przeglądarkę, tradycyjne programy i aplikacje na urządzenia mobilne. Wiele programów dostępnych jest jednocześnie na wielu rodzajach urządzeń dla wygody użytkowników. Ja skupiłem się na rozwiązaniach, które dostępne są przez przeglądarkę, gdyż są najbardziej zbliżone do rozwiązania proponowanego przeze mnie.
+Użytkownicy zainteresowani tematyką prowadzenia budżetu osobistego mają duży wybór dostępnych rozwiązań. Istnieją zarówno aplikacje dostępne przez przeglądarkę, tradycyjne programy i aplikacje na urządzenia mobilne. Wiele programów dostępnych jest jednocześnie na wielu rodzajach urządzeń dla wygody użytkowników. Ja skupiłem się na rozwiązaniach, które dostępne są przez przeglądarkę, gdyż są najbardziej zbliżone do rozwiązania proponowanego przeze mnie.
 \subsection{You Need a Budget (YNAB)}
-Aplikacja You Need a Budget \citep{ynab} jest dostępna przez przeglądarkę internetową oraz w postaci aplikacji na urządzenia mobilne na systemy operacyjne Android i iOS. Jest to program płatny, który kosztuje 14,99\$ miesięcznie lub 89,99\$ rocznie \cite{ynab-price}. Ideą tej aplikacji jest nie tyle zautomatyzowanie całego procesu zarządzania budżetem i całkowite wyręczenie użytkownika, co nauczenie go jak taki budżet tworzyć, więc aplikacja YNAB wymaga od użytkownika poświęcenia czasu na ręczne tworzenie budżetu. Filozofia tworzenia budżetu domowego w tej aplikacji polega na rozdzieleniu pieniędzy co do grosza na nasze cele. Program ten posiada użyteczną funkcję automatycznego pobierania wydatków z konta bankowego.
+Aplikacja You Need a Budget \citep{ynab} jest dostępna przez przeglądarkę internetową oraz w postaci aplikacji na urządzenia mobilne na systemy operacyjne Android i iOS. Jest to program płatny, który kosztuje 14,99\$ miesięcznie lub 89,99\$ rocznie \cite{ynab-price}. Ideą tej aplikacji jest nie tyle zautomatyzowanie całego procesu zarządzania budżetem i całkowite wyręczenie użytkownika, co nauczenie go jak taki budżet tworzyć, więc aplikacja YNAB wymaga od użytkownika poświęcenia czasu na ręczne tworzenie budżetu. Filozofia tworzenia budżetu osobistego w tej aplikacji polega na rozdzieleniu pieniędzy co do grosza na nasze cele. Program ten posiada użyteczną funkcję automatycznego pobierania wydatków z konta bankowego.
 
 \subsection{Mint}
 Mint \cite{mint} to darmowy program dostępny przez przeglądarkę internetową oraz jako aplikacja na urządzenia mobilne na systemy operacyjne Android i iOS. Aplikacja dostępna jest za darmo, ale wyświetla użytkownikom reklamy ofert od swoich partnerów biznesowych. To rozwiązanie posiada wiele funkcji automatyzujących cały proces zarządzania budżetem. Automatycznie pobiera wydatki z połączonego konta bankowego i przypisuje je do odpowiednich kategorii. Posiada też dodatkowe funkcje oprócz prowadzenia budżetu takie jak przypominanie o płatnościach za subskrypcje i rachunki lub wysyłanie użytkownikom porad, jak mogą lepiej zarządzać pieniędzmi. Dostępne są także informacje o zdolności kredytowej, funkcje związane z inwestowaniem oraz inne funkcjonalności dotyczące pieniędzy. Mamy więc tutaj więcej funkcji niż w poprzednim rozwiązaniu.
@@ -125,14 +149,96 @@ Mint \cite{mint} to darmowy program dostępny przez przeglądarkę internetową 
 \chapter{Opis systemu}
 \section{Sposób instalacji i dostępu do systemu}
 \subsection*{Część serwerowa}
-Część serwerowa wymaga do uruchomienia programu PostgreSQL \citep{pgsql} w wersji 13.4 oraz Java Runtime Enviroment (JRE) w wersji 17.0.1.
+Część serwerowa wymaga do uruchomienia programu PostgreSQL \citep{pgsql} w wersji 13.4 oraz Java Runtime Enviroment (JRE) \citep{java} w wersji 17.0.1.
 Część serwerowa została już zbudowana i dostępna jest w postaci pliku JAR, w którym zawarty jest wbudowany serwer aplikacji Tomcat.
 
-Program udostępniony jest w postaci gotowego do uruchomienia pliku JAR. Źródła programu dostępne są w repozytorium Git na stronie Github pod adresem \url{https://github.com/mat-kmita/budget-manager}. Do pobrania plików źródłowych możemy użyć na przykład polecenia:
-\noindent See the following command :
+\subsubsection*{Samodzielne budowanie aplikacji}
+Źródła programu dostępne są w repozytorium Git \citep{git} na stronie Github \citep{github} pod adresem \url{https://github.com/mat-kmita/budget-manager} i możemy ich użyć, jeśli chcemy samodzielnie zbudować program.
+\noindent Do pobrania plików źródłowych możemy użyć na przykład polecenia:
 \begin{lstlisting}[language=bash]
-  $ wget http://tex.stackexchange.com
+  $ git clone https://github.com/mat-kmita/budget-manager.git
 \end{lstlisting}
+Do zbudowania programu wymagane jest narzędzie Gradle \citep{gradle}.
+\noindend Aby zbudować program należy w katalogu \path{thesis_project} z plikami źrodłowymi części serwerowej wykonać:
+\begin{lstlisting}[language=bash]
+  $ gradle bootJar
+\end{lstlisting}
+
+\subsubsection*{Przygotowanie bazy danych}
+Program wymaga stworzenia bazy danych PostgreSQL. Potrzebujemy do tego użytkownika bazy danych.
+\noindend  Żeby go stworzyć użyjemy narzędzia createuser \citep{pgsql-createuser}:
+\begin{lstlisting}[language=bash]
+  $ createuser -d -P -h localhost -p 5432 -U postgres -W thesis
+\end{lstlisting}
+Program zapyta wtedy o hasło dla tworzonego użytkownika, które należy podać i zapamiętać. Nazwa użytkownika to thesis, ale można ją dostosować według własnego uznania przy czym będzie to wymagało zmiany konfiguracji aplikacji. Opcja h ustawia nazwę hosta, na którym działa baza danych, opcja p ustawia port, na którym baza nasłuchuje, opcja U ustawia istniejącego użytkownika bazy, jako który chcemy wykonać to polecenie. Opcje należy dostosować zgodnie z lokalną konfiguracją.
+Następnym krokiem jest już stworzenie bazy danych.
+\noindend  Użyjemy do tego narzędzia createdb \citep{pgsql-createdb}:
+\begin{lstlisting}[language=bash]
+  $ createdb -h localhost -p 5432 -O thesis -U thesis thesis_db    
+\end{lstlisting}
+Podobnie jak wyżej opcje h i p odpowiadają za ustalenie adresu bazy danych. Opcja O ustawia stworzonego wcześniej użytkownika jako właściciela bazy. W powyższym poleceniu nadajemy bazie nazwę thesis$\_$db, ale możemy to dostosować pamiętając, że będzie to wymagało zmiany domyślnej konfiguracji aplikacji.
+
+\subsubsection*{Konfiguracja aplikacji}
+Aplikacja konfigurowana jest przez plik konfiguracyjny \path{application.properties}. Znajduje się ona w źródłach aplikacji w katalogu \path{thesis_project/src/main/resources/application.properties}. Możemy dostosować opcje w tym pliku zanim zbudujemy aplikację. Jeśli aplikacja jest już zbudowana, możemy umieścić w katalogu, w którym znajduję się plik JAR plik o nazwie \path{application.properties}, który będzie nadpisywał domyślne opcje. 
+Przed uruchomieniem aplikacji należy ustawić hasło użytkownika bazy danych. W pliku konfiguracyjnym należy wpisać:
+   \begin{lstlisting}
+spring.datasource.password=<hasło użytkownika bazy danych>
+	\end{lstlisting}
+Jeśli użyliśmy niestandardowej nazwy użytkownika należy także zmienić opcję:
+	\begin{lstlisting}
+spring.datasource.username=<nazwa użytkownika bazy danych>
+	\end{lstlisting}
+Jeśli chcemy zmienić hosta, port lub nazwę bazy danych, z którą aplikacja ma się łączyć powinniśmy zmodyfikować opcję:
+	\begin{lstlisting}
+spring.datasource.url=<adres bazy danych>
+	\end{lstlisting}
+Format adresu bazy danych opisany jest na stronie internetowej \url{https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING}.
+Pozostałe opcje konfiguracji opisane są na stronie internetowej \url{https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html}.
+
+\subsubsection{Uruchamianie programu}
+Gdy skończyliśmy konfigurację aplikacji dla naszego środowiska, możemy ją uruchomić. 
+\noindend W katalogu, w którym znajduje się plik JAR o nazwie \path{application.jar} wykonujemy polecenie:
+\begin{lstlisting}[language=bash]
+  $ java application.jar
+\end{lstlisting}
+
+\subsection*{Część kliencka}
+Do uruchomienia części klienckiej wymagane jest Node.js \citep{nodejs} w wersji 17.0.1 oraz npm \citep{npm} w wersji 8.3.2.
+
+Aplikacja została już zbudowana i jest gotowa do uruchomienia. Kod źródłowy znajduje się w katalogu \path{thesis-front-end}.
+\noindend  Będąc w tym katalogu należy wykonać polecenia:
+\begin{lstlisting}[language=bash]
+  $ npm install -g serve
+  $ serve -s build
+\end{lstlisting}
+Aplikacja zostanie uruchomiona i będzie nasłuchiwała na porcie 3000.
+
+\section{Wymagania funkcjonalne}
+\begin{itemize}
+	\item Udostępnianie użytkownikowi gotowego zestawu kategorii wydatków do podziału budżetu.
+	\item Możliwość dodawania nowych kategorii przez użytkownika.
+	\item Możliwość zmiany nazwy kategorii.
+	\item Możliwość usuwania istniejących kategorii.
+	\item Możliwość podziału portfela na konta odpowiadające rzeczywistym kontom użytkownika lub będące wirtualnym podziałem środków.
+	\item Możliwość edycji właściwości konta oraz usuwania konta.
+	\item Możliwość transferu środków pomiędzy kontami wraz zapisem informacji dodatkowych o transferze, takich jak: data jego przeprowadzenia, komentarz.
+	\item Możliwość edycji danych zarejestrowanego transferu i całkowitego usunięcia go.
+	\item Możliwość rejestracji przychodów i wydatków wraz z informacjami takimi jak: data operacji, kwota, kategoria, komentarz, płatnik.
+	\item Możliwość edycji informacji o przychodach i wydatkach oraz usuwania tych operacji.
+	\item Możliwość tworzenia budżetów poprzez przydzielanie dostępnych środków pomiędzy istniejące kategorie.
+	\item Możliwość zmiany środków przydzielonych do kategorii w ramach budżetu.
+	\item Możliwość wyświetlania budżetu w postaci listy kategorii wraz z informacjami o sumie środków w ramach każdej kategorii wydanej oraz dostępnymi jeszcze środkami.
+	\item Możliwość wyświetlania informacji o sumie środków wydanych każdego dnia z danego przedziału czasowego.
+	\item Możliwość wyświetlania statystyk o procentowym udziale wydatków w każdej kategorii we wszystkich wydatkach.
+\end{itemize}
+
+\section{Wymagania niefunkcjonalne}
+\begin{itemize}
+	\item Interfejs graficzny aplikacji powinien być intuicyjny, spójny i prosty w obsłudze.
+	\item Aplikacja powinna sprawdzać poprawność danych wprowadzanych przez użytkownika.
+	\item Błędy w działaniu aplikacji powinny być przekazywane użytkownikowi z prostym i zrozumiałem wytłumaczeniem, nieudostępniając informacji o wewnętrznym działaniu aplikacji.
+	\item Dostęp do bazy danych musi być chroniony przed nieuprawnionymi osobami.
+\end{itemize}
 \section{Opis funkcji systemu}
 Koncepcja aplikacji polega na założeniu, że użytkownik będzie samodzielnie regularnie rejestrował w aplikacji wszystkie swoje wydatki oraz wpływy oraz ręcznie tworzył budżet rozdzielając pieniądze pomiędzy różne kategorie. Program będzie te informacje zapisywał oraz obliczał środki dostępne w ramach budżetu.
 
@@ -392,11 +498,11 @@ Pisząc aplikację starałem się, aby była ona otwarta na dalsze usprawnienia.
 \subsection{Automatyczne dodawanie transakcji}
 Dodawanie wszystkich transakcji i transferów ręcznie jest żmudne. Można więc to poprawić poprzez automatyczne pobieranie transakcji z kont bankowych użytkownika. Wymagałoby to dostępu do raportów z bankowości elektronicznej lub użycia API udostępnianego przez różne instytucje finansowe. Aplikacja mogłaby też posiadać funkcję odczytywania danych z paragonów, aby użytkownik nie musiał wpisywać ich ręcznie, a także pozwalałaby je zapisywać, aby były od razu dostępne w historii operacji.
 \subsection{Konta użytkowników}
-Obecnie aplikacja przeznaczona jest dla jednego użytkownika co jest dużym ograniczeniem. Dodanie kont użytkowników, którzy prowadziliby oddzielnie dla siebie budżety byłoby więc dużym usprawnieniem aplikacji. Wymagałoby to dodania mechanizmu autoryzacji i uwierzytelniania oraz bezpiecznego przechowywania danych użytkowników. Po zaimplementowaniu takiej funkcjonalności można by było też udostępnić bezpiecznie aplikację przez Internet.
+Obecnie aplikacja przeznaczona jest dla jednego konta co jest dużym ograniczeniem. Dodanie kont użytkowników, którzy prowadziliby oddzielnie dla siebie budżety byłoby więc dużym usprawnieniem aplikacji. Wymagałoby to dodania mechanizmu autoryzacji i uwierzytelniania oraz bezpiecznego przechowywania danych użytkowników. Po zaimplementowaniu takiej funkcjonalności można by było też udostępnić bezpiecznie aplikację przez Internet.
 \subsection{Podział transakcji na kilka kategorii}
 Niektóre transakcje stanowią pojedynczą operację finansową, ale składają się z transakcji w wielu kategoriach, np. w ramach jednej zapłaty za produkty w sklepie wydajemy pieniądze w różnych kategoriach. Dodanie opcji podziału transakcji na kilka kategorii usprawniłoby używanie aplikacji, gdyż historia operacji zapisanych w aplikacji lepiej odzwierciedlałaby rzeczywiste operacje.
 \section{Wnioski końcowe}
-Pomysł na aplikację wziął się także z moich prywatnych potrzeb, gdyż nie chciałem przechowywać informacji o budżecie na zewnętrznych serwerach. W ramach tej pracy udało mi się stworzyć aplikację z podstawowymi funkcjonalnościami, które są wystarczające, aby rozpocząć zarządzanie budżetem domowym. Tworząc ten program miałem okazję poznać nowoczesne technologie z różnych dziedzin - zarówno używane po stronie serwera, jak i przeglądarki internetowej.
+Pomysł na aplikację wziął się także z moich prywatnych potrzeb, gdyż nie chciałem przechowywać informacji o budżecie na zewnętrznych serwerach. W ramach tej pracy udało mi się stworzyć aplikację z podstawowymi funkcjonalnościami, które są wystarczające, aby rozpocząć zarządzanie budżetem osobistym. Tworząc ten program miałem okazję poznać nowoczesne technologie z różnych dziedzin - zarówno używane po stronie serwera, jak i przeglądarki internetowej.
 %%%%% BIBLIOGRAFIA
 
 \bibliographystyle{unsrt}
