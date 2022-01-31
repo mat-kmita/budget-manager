@@ -12,5 +12,5 @@ public class TransferDto {
     private LocalDate date;
     private String memo;
     private int amount;
-    private String payee;
+    private int payeeId;
 }

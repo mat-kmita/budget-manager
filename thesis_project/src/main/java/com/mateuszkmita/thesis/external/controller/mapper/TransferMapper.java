@@ -15,7 +15,7 @@ public interface TransferMapper {
     @Mapping(target = "date", source = "entity.date", dateFormat = "dd-MM-yyyy")
     @Mapping(target = "memo", source = "entity.memo")
     @Mapping(target = "amount", source = "entity.amount")
-    @Mapping(target = "payee", source = "payeeAccount.name")
+    @Mapping(target = "payeeId", source = "payeeAccount.id")
     TransferDto entityToDto(Transfer entity, Account payeeAccount);
 
 
@@ -23,8 +23,8 @@ public interface TransferMapper {
     @Mapping(target = "date", source = "entity.date", dateFormat = "dd-MM-yyyy")
     @Mapping(target = "memo", source = "entity.memo")
     @Mapping(target = "amount", source = "entity.amount")
-    @Mapping(target = "payee", source = "entity.account.name")
-    @Mapping(target = "secondPayee", source = "entity.secondAccount.name")
+    @Mapping(target = "payeeId", source = "entity.account.id")
+    @Mapping(target = "secondPayeeId", source = "entity.secondAccount.id")
     TransferDtoWithBothPayees entityToDtoWithBothPayees(Transfer entity);
 
     @Mapping(target = "id", expression = "java(null)")

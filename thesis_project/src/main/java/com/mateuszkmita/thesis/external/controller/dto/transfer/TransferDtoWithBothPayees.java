@@ -6,10 +6,10 @@ import java.time.LocalDate;
 
 @Getter
 public class TransferDtoWithBothPayees extends TransferDto {
-    private String secondPayee;
+    private int secondPayeeId;
 
-    public TransferDtoWithBothPayees(int id, LocalDate date, String memo, int amount, String payee, String secondPayee) {
-        super(id, date, memo, amount, payee);
-        this.secondPayee = secondPayee;
+    public TransferDtoWithBothPayees(int id, LocalDate date, String memo, int amount, int payeeId, int secondPayeeId) {
+        super(id, date, memo, amount, payeeId);
+        this.secondPayeeId = secondPayeeId;
     }
 }
