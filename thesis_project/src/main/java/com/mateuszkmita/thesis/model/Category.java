@@ -1,6 +1,7 @@
 package com.mateuszkmita.thesis.model;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 
@@ -18,5 +19,6 @@ public class Category {
     private Integer id;
 
     @Column(name = "name", nullable = false)
+    @Length(max = 50)
     private String name;
 }

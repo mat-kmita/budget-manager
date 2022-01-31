@@ -3,6 +3,7 @@ package com.mateuszkmita.thesis.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class Transfer {
     private LocalDate date;
 
     @Column(name = "memo")
+    @Length(max = 300)
     private String memo;
 
     @Column(name = "amount", nullable = false)

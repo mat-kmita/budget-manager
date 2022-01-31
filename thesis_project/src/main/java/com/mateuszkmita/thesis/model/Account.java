@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 
@@ -20,6 +21,7 @@ public class Account {
     private Integer id;
 
     @Column(name = "name")
+    @Length(min = 3, max = 50)
     private String name;
 
     @Column(name = "type")
@@ -27,6 +29,7 @@ public class Account {
     private AccountType accountType;
 
     @Column(name = "description")
+    @Length(max = 100)
     private String description;
 
     @Column(name = "balance")
