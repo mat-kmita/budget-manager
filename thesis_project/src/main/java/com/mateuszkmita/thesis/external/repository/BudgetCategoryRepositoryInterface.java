@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface BudgetCategoryRepositoryInterface extends CrudRepository<BudgetCategory, Integer> {
     @Query(nativeQuery = true,
@@ -15,4 +16,6 @@ public interface BudgetCategoryRepositoryInterface extends CrudRepository<Budget
                     EXTRACT(MONTH from b.month_year) = :month AND
                     EXTRACT(YEAR FROM b.month_year) = :year""")
     Optional<BudgetCategory> findByCategoryAndDate(int categoryId, int month, int year);
+
+    Stream<BudgetCategory> findAllByCategory_Id(int categoryId);
 }

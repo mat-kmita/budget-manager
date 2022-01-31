@@ -1,6 +1,7 @@
 package com.mateuszkmita.thesis.core.interactor;
 
 import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
+import com.mateuszkmita.thesis.external.repository.AccountRepositoryInterface;
 import com.mateuszkmita.thesis.external.repository.TransfersRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.Transfer;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class TransferInteractor implements TransferServiceInterface {
 
     private final TransfersRepositoryInterface transfersRepository;
+    private final AccountRepositoryInterface accountRepository;
 
     @Override
     public Page<Transfer> findTransfersByAccountId(int accountId, Transfer.Fields sortField, Sort.Direction direction, int page, int length) {
@@ -54,13 +57,13 @@ public class TransferInteractor implements TransferServiceInterface {
 
         // Accounts have changed
         // Update accounts balance according to old transfer amount
-        if (oldTransfer.getAccount().getId() != updatedTransfer.getAccount().getId()) {
+        if (!Objects.equals(oldTransfer.getAccount().getId(), updatedTransfer.getAccount().getId())) {
             Account oldFromAccount = oldTransfer.getAccount();
             Account newFromAccount = updatedTransfer.getAccount();
 
             oldFromAccount.setBalance(oldFromAccount.getBalance() + oldTransfer.getAmount());
             newFromAccount.setBalance(newFromAccount.getBalance() - oldTransfer.getAmount());
-        } else if (oldTransfer.getSecondAccount().getId() != updatedTransfer.getSecondAccount().getId()) {
+        } else if (!Objects.equals(oldTransfer.getSecondAccount().getId(), updatedTransfer.getSecondAccount().getId())) {
             Account oldToAccount = oldTransfer.getSecondAccount();
             Account newToAccount = updatedTransfer.getSecondAccount();
 
@@ -72,10 +75,12 @@ public class TransferInteractor implements TransferServiceInterface {
         // Update current accounts' balance
         if (oldTransfer.getAmount() != updatedTransfer.getAmount()) {
             Account fromAccount = updatedTransfer.getAccount();
-            Account toAccount = updatedTransfer.getAccount();
+            Account toAccount = updatedTransfer.getSecondAccount();
 
             fromAccount.setBalance(fromAccount.getBalance() + oldTransfer.getAmount() - updatedTransfer.getAmount());
             toAccount.setBalance(toAccount.getBalance() - oldTransfer.getAmount() + updatedTransfer.getAmount());
+
+            accountRepository.saveAll(List.of(fromAccount,toAccount));
         }
 
         // Changes in other properties of a transfer don't require any actions beside saving new values in db
@@ -86,9 +91,15 @@ public class TransferInteractor implements TransferServiceInterface {
     public void deleteTransfer(Transfer transfer) {
         Account toAccount = transfer.getAccount();
         Account fromAccount = transfer.getSecondAccount();
-        fromAccount.setBalance(fromAccount.getBalance() + transfer.getAmount());
-        toAccount.setBalance(toAccount.getBalance() - transfer.getAmount());
+        fromAccount.setBalance(fromAccount.getBalance() - transfer.getAmount());
+        toAccount.setBalance(toAccount.getBalance() + transfer.getAmount());
 
         transfersRepository.delete(transfer);
+    }
+
+    @Override
+    public void deleteTransfersByAccountId(int id) {
+        List<Transfer> transfers = transfersRepository.findTransferByAccountId(id);
+        transfers.forEach(this::deleteTransfer);
     }
 }

@@ -1,6 +1,5 @@
 package com.mateuszkmita.thesis.core.interactor;
 
-import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.BudgetServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
@@ -10,8 +9,6 @@ import com.mateuszkmita.thesis.external.repository.dto.ExpensesAmountSumWithCate
 import com.mateuszkmita.thesis.external.repository.dto.TransactionAmountSumByDateDto;
 import com.mateuszkmita.thesis.model.*;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

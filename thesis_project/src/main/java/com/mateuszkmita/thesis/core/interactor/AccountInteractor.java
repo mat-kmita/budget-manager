@@ -4,6 +4,7 @@ import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.AccountServiceInterface;
 import com.mateuszkmita.thesis.core.service.CategoryServiceInterface;
 import com.mateuszkmita.thesis.core.service.TransactionServiceInterface;
+import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
 import com.mateuszkmita.thesis.external.repository.AccountRepositoryInterface;
 import com.mateuszkmita.thesis.model.Account;
 import com.mateuszkmita.thesis.model.Transaction;
@@ -21,10 +22,13 @@ import java.util.Optional;
 public class AccountInteractor implements AccountServiceInterface {
 
     private final AccountRepositoryInterface accountRepository;
+    private final CategoryServiceInterface categoryService;
     @Setter
     @Autowired
     private TransactionServiceInterface transactionService;
-    private final CategoryServiceInterface categoryService;
+    @Setter
+    @Autowired
+    private TransferServiceInterface transferService;
 
     @Override
     public Iterable<Account> findAllAccounts() {
@@ -65,6 +69,7 @@ public class AccountInteractor implements AccountServiceInterface {
         Account account = findAccountById(accountId)
                 .orElseThrow(() -> new ResourceNotFoundException("account", accountId));
         transactionService.deleteTransactionsByAccountId(account.getId());
+        transferService.deleteTransfersByAccountId(account.getId());
         accountRepository.delete(account);
     }
 }

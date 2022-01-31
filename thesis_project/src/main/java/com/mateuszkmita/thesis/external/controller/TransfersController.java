@@ -2,9 +2,9 @@ package com.mateuszkmita.thesis.external.controller;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.TransferServiceInterface;
-import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
 import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferDto;
 import com.mateuszkmita.thesis.external.controller.dto.transfer.TransferUpdateDto;
+import com.mateuszkmita.thesis.external.controller.dto.util.ProcedureResultDto;
 import com.mateuszkmita.thesis.external.controller.mapper.TransferMapper;
 import com.mateuszkmita.thesis.model.Transfer;
 import lombok.RequiredArgsConstructor;

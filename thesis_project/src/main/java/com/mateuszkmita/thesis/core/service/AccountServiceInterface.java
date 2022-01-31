@@ -11,5 +11,4 @@ public interface AccountServiceInterface {
     Account saveAccountEntity(Account account);
     Account updateAccountEntity(Account updatedAccount);
     void deleteAccountById(int accountId) throws ResourceNotFoundException;
-
 }

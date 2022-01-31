@@ -2,10 +2,12 @@ package com.mateuszkmita.thesis.core.interactor;
 
 import com.mateuszkmita.thesis.core.exception.ResourceNotFoundException;
 import com.mateuszkmita.thesis.core.service.BudgetCategoryServiceInterface;
-import com.mateuszkmita.thesis.core.service.BudgetServiceInterface;
 import com.mateuszkmita.thesis.external.repository.BudgetCategoryRepositoryInterface;
 import com.mateuszkmita.thesis.external.repository.BudgetRepositoryInterface;
-import com.mateuszkmita.thesis.model.*;
+import com.mateuszkmita.thesis.model.Budget;
+import com.mateuszkmita.thesis.model.BudgetCategory;
+import com.mateuszkmita.thesis.model.Category;
+import com.mateuszkmita.thesis.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +37,10 @@ public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface 
         Budget existing = this.budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new ResourceNotFoundException("budget", budgetId));
 
-        Optional<BudgetCategory> optionalBudgetCategory = existing.getBudgetCategories().stream().filter(budgetCategory -> budgetCategory.getCategory().getId() == categoryId).findFirst();
+        Optional<BudgetCategory> optionalBudgetCategory = existing.getBudgetCategories()
+                .stream()
+                .filter(budgetCategory -> budgetCategory.getCategory().getId() == categoryId)
+                .findFirst();
 
         if (optionalBudgetCategory.isEmpty()) {
             throw new ResourceNotFoundException("budget category", categoryId);
@@ -70,5 +75,18 @@ public class BudgetCategoryInteractor implements BudgetCategoryServiceInterface 
                 .map(budget -> new BudgetCategory(null, budget, category, 0))
                 .collect(Collectors.toList());
         return budgetCategoryRepository.saveAll(budgetCategories);
+    }
+
+    public void deleteAllByCategoryId(int categoryId) {
+        List<BudgetCategory> budgetCategories = budgetCategoryRepository.findAllByCategory_Id(categoryId).
+                collect(Collectors.toList());
+        budgetCategories.stream()
+                .filter(bc -> bc.getAmount() > 0)
+                .forEach(budgetCategory -> {
+                    Budget budget = budgetCategory.getBudget();
+                    budget.setBudgetedAmount(budget.getBudgetedAmount() - budgetCategory.getAmount());
+                });
+        budgetCategoryRepository.saveAll(budgetCategories);
+        budgetCategoryRepository.deleteAll(budgetCategories);
     }
 }

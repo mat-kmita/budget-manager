@@ -19,4 +19,6 @@ public interface BudgetCategoryServiceInterface {
     BudgetCategory removeTransaction(BudgetCategory budgetCategory, Transaction transaction);
 
     Iterable<BudgetCategory> createAllForCategory(Category category);
+
+    void deleteAllByCategoryId(int categoryId);
 }

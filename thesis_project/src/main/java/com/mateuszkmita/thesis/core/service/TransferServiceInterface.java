@@ -18,4 +18,6 @@ public interface TransferServiceInterface {
     Transfer updateTransferEntity(Transfer oldTransfer, Transfer updatedTransfer);
 
     void deleteTransfer(Transfer transfer);
+
+    void deleteTransfersByAccountId(int id);
 }

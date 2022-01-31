@@ -2,7 +2,6 @@ package com.mateuszkmita.thesis.external.controller.dto.transaction;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 

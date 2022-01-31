@@ -8,7 +8,6 @@ import com.mateuszkmita.thesis.external.repository.CategoryRepositoryInterface;
 import com.mateuszkmita.thesis.external.repository.TransactionsRepositoryInterface;
 import com.mateuszkmita.thesis.model.BudgetCategory;
 import com.mateuszkmita.thesis.model.Category;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -90,6 +89,7 @@ public class CategoryInteractor implements CategoryServiceInterface {
             throw new CategoryDeleteException(category);
         }
 
+        budgetCategoryService.deleteAllByCategoryId(id);
         categoryRepository.delete(category);
     }
 

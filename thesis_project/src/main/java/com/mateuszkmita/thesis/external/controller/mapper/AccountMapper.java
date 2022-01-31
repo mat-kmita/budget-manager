@@ -3,10 +3,7 @@ package com.mateuszkmita.thesis.external.controller.mapper;
 import com.mateuszkmita.thesis.external.controller.dto.account.AccountDto;
 import com.mateuszkmita.thesis.external.controller.dto.account.AccountUpdateDto;
 import com.mateuszkmita.thesis.external.controller.dto.account.NewAccountDto;
-import com.mateuszkmita.thesis.external.controller.dto.transaction.NewTransactionDto;
 import com.mateuszkmita.thesis.model.Account;
-import com.mateuszkmita.thesis.model.Category;
-import com.mateuszkmita.thesis.model.Transaction;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
